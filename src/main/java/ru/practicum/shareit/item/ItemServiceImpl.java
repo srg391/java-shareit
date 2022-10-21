@@ -19,9 +19,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-
-    private final ItemRepositoryImpl itemRepository = new ItemRepositoryImpl();
-    private final UserRepositoryImpl userRepository = new UserRepositoryImpl();
+    @Autowired
+    private final ItemRepositoryImpl itemRepository;
+    @Autowired
+    private final UserRepositoryImpl userRepository;
     @Autowired
     private final ItemMapper itemMapper;
 

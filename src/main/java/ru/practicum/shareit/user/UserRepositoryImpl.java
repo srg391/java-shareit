@@ -1,9 +1,11 @@
 package ru.practicum.shareit.user;
 
+import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
 
+@Repository
 public class UserRepositoryImpl implements UserRepository {
     private final Map<Long, User> users = new LinkedHashMap<>();
     private long nextId = 0;

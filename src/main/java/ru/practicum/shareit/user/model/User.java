@@ -12,8 +12,8 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
+@NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class User {
 
     private Long id;

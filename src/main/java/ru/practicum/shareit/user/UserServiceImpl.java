@@ -13,8 +13,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
-    private final UserRepositoryImpl userRepository = new UserRepositoryImpl();
+    @Autowired
+    private final UserRepositoryImpl userRepository;
     @Autowired
     private final UniqueEmailsRepository uniqueEmailsRepository;
     @Autowired
@@ -48,10 +48,12 @@ public class UserServiceImpl implements UserService {
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
         }
-        uniqueEmailsRepository.checkEmailForUniquenessAndValidity(userDto.getEmail());
-        uniqueEmailsRepository.deleteEmailFromSetStorage(user.getEmail());
-        user.setEmail(userDto.getEmail());
-        userRepository.updateUser(user);
+        if (userDto.getEmail() != null) {
+            uniqueEmailsRepository.checkEmailForUniquenessAndValidity(userDto.getEmail());
+            uniqueEmailsRepository.deleteEmailFromSetStorage(user.getEmail());
+            user.setEmail(userDto.getEmail());
+            userRepository.updateUser(user);
+        }
         return userMapper.createDtoUser(user);
     }
 

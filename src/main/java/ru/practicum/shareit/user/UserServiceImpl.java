@@ -47,8 +47,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
-        }
-        if (userDto.getEmail() != null) {
+        }if (userDto.getEmail() != null) {
             uniqueEmailsRepository.checkEmailForUniquenessAndValidity(userDto.getEmail());
             uniqueEmailsRepository.deleteEmailFromSetStorage(user.getEmail());
             user.setEmail(userDto.getEmail());

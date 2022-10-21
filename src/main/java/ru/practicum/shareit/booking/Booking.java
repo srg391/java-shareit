@@ -17,15 +17,15 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class Booking {
 
-    long id;
+    private Long id;
     @NotNull(message = "Дата и время начала бронирования не соотвествует!")
-    LocalDateTime start;
+    private LocalDateTime start;
     @NotNull(message = "Дата и время окончания бронирования не соотвествует!")
-    LocalDateTime end;
+    private LocalDateTime end;
     @NotBlank(message = "Название не соотвествует!")
-    String item;
+    private String item;
     @NotBlank(message = "Имя бронирующего не соотвествует!")
-    String booker;
+    private String booker;
     @NotBlank(message = "Статус брони не соотвествует!")
-    String status;
+    private String status;
 }

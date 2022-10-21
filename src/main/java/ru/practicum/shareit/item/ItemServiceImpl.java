@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -8,28 +9,21 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemMapper;
+import ru.practicum.shareit.user.UserRepositoryImpl;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.UserRepository;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
-    private ItemRepository itemRepository;
-
-    private ItemMapper itemMapper;
-
-    private UserRepository userRepository;
-
+    private final ItemRepositoryImpl itemRepository = new ItemRepositoryImpl();
+    private final UserRepositoryImpl userRepository = new UserRepositoryImpl();
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, ItemMapper itemMapper, UserRepository userRepository) {
-        this.itemRepository = itemRepository;
-        this.itemMapper = itemMapper;
-        this.userRepository = userRepository;
-    }
+    private final ItemMapper itemMapper;
 
     @Override
     public ItemDto getItem(long itemId) {
@@ -74,9 +68,9 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto updateItem(long userId, ItemDto itemDto) {
         final Item item = itemRepository.getByItemId(itemDto.getId())
                 .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemDto.getId() + " не существует!"));
-        User owner = userRepository.getByUserId(userId)
+        final User owner = userRepository.getByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Хозяин c id=" + userId + " не существует!"));
-        if ((item.getOwner().getId()) == (owner.getId())) {
+        if (item.getOwner().getId() == (owner.getId())) {
             if (itemDto.getName() != null) {
                 item.setName(itemDto.getName());
             }

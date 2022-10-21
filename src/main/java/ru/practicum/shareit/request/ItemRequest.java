@@ -17,11 +17,11 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ItemRequest {
 
-    long id;
+    private Long id;
     @NotBlank(message = "Описание не соотвествует!")
-    String description;
+    private String description;
     @NotBlank(message = "Имя запросившего вещь не соотвествует!")
-    String requester;
+    private String requester;
     @NotNull(message = "Дата и время бронирования не соотвествует!")
-    LocalDateTime created;
+    private LocalDateTime created;
 }

@@ -13,11 +13,13 @@ public class UniqueEmailsRepository {
     private final Set<String> uniqueEmails = new HashSet<>();
 
     public void checkEmailForUniquenessAndValidity(String email) {
-        if (!email.contains(" ") && email.matches(".+@.+\\.[a-z]+")) {
-            if (uniqueEmails.contains(email)) {
-                throw new AlreadyExistsException("Пользователь с почтой " + email + " уже существует!");
-            } else uniqueEmails.add(email);
-        } else throw new InvalidEmailException("Email не соотвествует!");
+        if (email != null) {
+            if (!email.contains(" ") && email.matches(".+@.+\\.[a-z]+")) {
+                if (uniqueEmails.contains(email)) {
+                    throw new AlreadyExistsException("Пользователь с почтой " + email + " уже существует!");
+                } else uniqueEmails.add(email);
+            } else throw new InvalidEmailException("Email не соотвествует!");
+        }
     }
 
     public void deleteEmailFromSetStorage(String email) {

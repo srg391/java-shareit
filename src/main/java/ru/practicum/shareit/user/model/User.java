@@ -16,11 +16,11 @@ import javax.validation.constraints.NotBlank;
 @RequiredArgsConstructor
 public class User {
 
-    long id;
+    private Long id;
     @NotBlank(message = "Имя не соотвествует!")
-    String name;
+    private String name;
     @NotBlank(message = "Адрес электронной почты не соотвествует!")
     @Email(message = "Адрес электронной почты не соотвествует!")
-    String email;
+    private String email;
 
 }

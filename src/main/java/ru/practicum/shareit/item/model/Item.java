@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class Item {
 
-    long id;
+    private Long id;
     @NotBlank(message = "Название не соотвествует!")
     private String name;
     @NotBlank(message = "Описание не соотвествует!")

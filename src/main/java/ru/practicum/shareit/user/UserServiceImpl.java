@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -10,21 +11,14 @@ import ru.practicum.shareit.user.model.UserMapper;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-
-    private UserRepository userRepository;
-
-    private UniqueEmailsRepository uniqueEmailsRepository;
-
-    private UserMapper userMapper;
-
+    private final UserRepositoryImpl userRepository = new UserRepositoryImpl();
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UniqueEmailsRepository uniqueEmailsRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.uniqueEmailsRepository = uniqueEmailsRepository;
-        this.userMapper = userMapper;
-    }
+    private final UniqueEmailsRepository uniqueEmailsRepository;
+    @Autowired
+    private final UserMapper userMapper;
 
     @Override
     public UserDto getUser(long userId) {
@@ -54,12 +48,10 @@ public class UserServiceImpl implements UserService {
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
         }
-            if (userDto.getEmail() != null) {
-                uniqueEmailsRepository.checkEmailForUniquenessAndValidity(userDto.getEmail());
-                uniqueEmailsRepository.deleteEmailFromSetStorage(user.getEmail());
-                user.setEmail(userDto.getEmail());
-            }
-            userRepository.updateUser(user);
+        uniqueEmailsRepository.checkEmailForUniquenessAndValidity(userDto.getEmail());
+        uniqueEmailsRepository.deleteEmailFromSetStorage(user.getEmail());
+        user.setEmail(userDto.getEmail());
+        userRepository.updateUser(user);
         return userMapper.createDtoUser(user);
     }
 

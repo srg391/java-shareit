@@ -71,7 +71,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemDto.getId() + " не существует!"));
         final User owner = userRepository.getByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Хозяин c id=" + userId + " не существует!"));
-        if ((item.getOwner().getId()).equals(owner.getId())) {
+        if (item.getOwner().getId().equals(owner.getId())) {
             if (itemDto.getName() != null) {
                 item.setName(itemDto.getName());
             }

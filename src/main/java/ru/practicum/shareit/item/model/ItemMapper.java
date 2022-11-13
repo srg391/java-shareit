@@ -1,14 +1,21 @@
 package ru.practicum.shareit.item.model;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.comment.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ItemMapper {
+
+    private final CommentMapper commentMapper;
 
     public ItemDto createDtoItem(Item item) {
         return new ItemDto(
@@ -16,7 +23,7 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getRequest()
+                item.getRequestId()
         );
     }
 
@@ -34,7 +41,52 @@ public class ItemMapper {
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 owner,
-                itemDto.getRequest()
+                itemDto.getRequestId()
         );
+    }
+
+    public ItemWithBookingDto createDtoItemWithBooking(Item item, Booking lastBooking, Booking nextBooking) {
+        if (lastBooking == null && nextBooking == null) {
+            return new ItemWithBookingDto(
+                    item.getId(),
+                    item.getName(),
+                    item.getDescription(),
+                    item.getAvailable(),
+                    item.getRequestId(),
+                    commentMapper.createDtoListComment(item.getComments()),
+                    null,
+                    null);
+        } else if (lastBooking == null) {
+            return new ItemWithBookingDto(
+                    item.getId(),
+                    item.getName(),
+                    item.getDescription(),
+                    item.getAvailable(),
+                    item.getRequestId(),
+                    commentMapper.createDtoListComment(item.getComments()),
+                    null,
+                    new ItemWithBookingDto.Booking(nextBooking.getId(), nextBooking.getBooker().getId()));
+        } else if (nextBooking == null) {
+            return new ItemWithBookingDto(
+                    item.getId(),
+                    item.getName(),
+                    item.getDescription(),
+                    item.getAvailable(),
+                    item.getRequestId(),
+                    commentMapper.createDtoListComment(item.getComments()),
+                    new ItemWithBookingDto.Booking(lastBooking.getId(), lastBooking.getBooker().getId()),
+                    null);
+        } else {
+            return new ItemWithBookingDto(
+                    item.getId(),
+                    item.getName(),
+                    item.getDescription(),
+                    item.getAvailable(),
+                    item.getRequestId(),
+                    commentMapper.createDtoListComment(item.getComments()),
+                    new ItemWithBookingDto.Booking(lastBooking.getId(), lastBooking.getBooker().getId()),
+                    new ItemWithBookingDto.Booking(nextBooking.getId(), nextBooking.getBooker().getId())
+            );
+        }
     }
 }

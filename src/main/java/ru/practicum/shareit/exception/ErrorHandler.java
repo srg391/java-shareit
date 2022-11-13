@@ -32,4 +32,40 @@ public class ErrorHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<String> handelItemNotAvailableException(final ItemNotAvailableException e) {
+        log.info("400 {}", e.getMessage());
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handelBadStatusBookingException(final BadStatusBookingException e) {
+        log.info("404 {}", e.getMessage());
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handelBadRequestBookingException(final BadRequestBookingException e) {
+        log.info("500 {}", e.getMessage());
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handelBadOwnerException(final  BadOwnerException e) {
+        log.info("404 {}", e.getMessage());
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handelBadStatusForCommentException(final  BadStatusForCommentException e) {
+        log.info("400 {}", e.getMessage());
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handelBadStatusForBookingsOfOwnerException(final  BadStatusForBookingsOfOwnerException e) {
+        log.info("500 {}", e.getMessage());
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }

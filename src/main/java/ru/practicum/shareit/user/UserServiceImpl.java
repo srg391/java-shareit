@@ -2,7 +2,9 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.InvalidEmailException;
 import ru.practicum.shareit.exception.NotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserMapper;
@@ -13,55 +15,54 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepositoryImpl userRepository;
-
-    private final UniqueEmailsRepository uniqueEmailsRepository;
+    private final UserRepository userRepository;
 
     private final UserMapper userMapper;
 
     @Override
     public UserDto getUser(long userId) {
-        final User user = userRepository.getByUserId(userId)
+        final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
         return userMapper.createDtoUser(user);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        List<User> users = userRepository.getAllUsers();
+        List<User> users = userRepository.findAll();
         return userMapper.createDtoListUser(users);
     }
 
     @Override
+    @Transactional
     public UserDto createUser(UserDto userDto) {
-        uniqueEmailsRepository.checkEmailForUniquenessAndValidity(userDto.getEmail());
+        if (userDto.getEmail() == null) {
+            throw new InvalidEmailException("Почта не может быть пустой!");
+        }
         User user = userMapper.createUser(userDto);
-        User savedUser = userRepository.saveUser(user);
-        return userMapper.createDtoUser(savedUser);
+            User savedUser = userRepository.save(user);
+            return userMapper.createDtoUser(savedUser);
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(long userId, UserDto userDto) {
-        final User user = userRepository.getByUserId(userId)
+        final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
-            uniqueEmailsRepository.checkEmailForUniquenessAndValidity(userDto.getEmail());
-            uniqueEmailsRepository.deleteEmailFromSetStorage(user.getEmail());
             user.setEmail(userDto.getEmail());
-            userRepository.updateUser(user);
         }
+        userRepository.save(user);
         return userMapper.createDtoUser(user);
     }
 
     @Override
     public void deleteByUserId(long userId) {
-        final User user = userRepository.getByUserId(userId)
+        final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
-        userRepository.deleteByUserId(userId);
-        uniqueEmailsRepository.deleteEmailFromSetStorage(user.getEmail());
+        userRepository.delete(user);
     }
 
 }

@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.Create;
 import ru.practicum.shareit.Update;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.comment.CommentService;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -28,6 +29,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemWithBookingDto getItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
+        if (true) throw new NotFoundException("Оторвалося");
         ItemWithBookingDto itemWithBookingDto = itemService.getItem(itemId, userId);
         log.debug("Вещь с id :" + itemId);
         return itemWithBookingDto;

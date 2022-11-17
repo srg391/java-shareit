@@ -28,6 +28,7 @@ public class BookingDto {
     @EqualsAndHashCode(of = "id")
     @NoArgsConstructor
     @AllArgsConstructor
+    @ToString
     public static class Booker {
         Long id;
     }
@@ -37,6 +38,7 @@ public class BookingDto {
     @EqualsAndHashCode(of = "id")
     @NoArgsConstructor
     @AllArgsConstructor
+    @ToString
     public static class Item {
         Long id;
         String name;

@@ -20,6 +20,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
+    @Transactional
     public UserDto getUser(long userId) {
         final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
@@ -27,6 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public List<UserDto> getAllUsers() {
         List<User> users = userRepository.findAll();
         return userMapper.createDtoListUser(users);
@@ -35,11 +37,17 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto createUser(UserDto userDto) {
-        if (userDto.getEmail() == null) {
-            throw new InvalidEmailException("Почта не может быть пустой!");
+        User savedUser = null;
+        if (userDto.getEmail() != null) {
+            if (!userDto.getEmail().contains(" ") && userDto.getEmail().matches(".+@.+\\.[a-z]+")) {
+                User user = userMapper.createUser(userDto);
+                savedUser = userRepository.save(user);
+            } else throw new InvalidEmailException("Email не соотвествует!");
         }
-        User user = userMapper.createUser(userDto);
-            User savedUser = userRepository.save(user);
+//        if (userDto.getEmail() == null) {
+//            throw new InvalidEmailException("Почта не может быть пустой!");
+//        }
+
             return userMapper.createDtoUser(savedUser);
     }
 
@@ -59,6 +67,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteByUserId(long userId) {
         final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));

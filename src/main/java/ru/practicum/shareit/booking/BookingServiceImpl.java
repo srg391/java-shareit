@@ -32,7 +32,8 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("Бронирование c id=" + bookingId + " не существует!"));
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
-        if (!booking.getItem().getOwner().getId().equals(owner.getId()) && !booking.getBooker().getId().equals(owner.getId())) {
+        if (!booking.getItem().getOwner().getId().equals(owner.getId())
+                && !booking.getBooker().getId().equals(owner.getId())) {
             throw new NotFoundException("Запрос может производить только владелец или бронирующий!");
         }
         return bookingMapper.createDtoBooking(booking);

@@ -5,7 +5,6 @@ import ru.practicum.shareit.item.comment.model.Comment;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,17 +19,17 @@ import java.util.List;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-
-    @NotBlank(message = "Название не соотвествует!")
+    @Column(name = "name", nullable = false)
     private String name;
-
+    @Column(name = "description", nullable = false)
     private String description;
-
+    @Column(name = "is_available", nullable = false)
     private Boolean available;
 
-    @JoinColumn(name = "owner_id")
+    @JoinColumn(name = "owner_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User owner;
 

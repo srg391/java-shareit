@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping(path = "/bookings")
 @Validated
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class BookingController {
     private final BookingService bookingService;
 
@@ -34,7 +34,7 @@ public class BookingController {
                                               @RequestParam(name = "state", defaultValue = "ALL") String stateParam) {
         BookingState state = BookingState.from(stateParam);
         if (state == null) {
-            throw new IllegalArgumentException("Unknown state: " + stateParam);
+            throw new IllegalArgumentException("Состояние не известно : " + stateParam);
         }
         List<BookingDto> bookings = bookingService.getAllBookingsOfUser(userId, state);
         log.debug("Количество бронирований : " + bookings.size());
@@ -46,7 +46,7 @@ public class BookingController {
                                               @RequestParam(name = "state", defaultValue = "ALL") String stateParam) {
         BookingState state = BookingState.from(stateParam);
         if (state == null) {
-            throw new IllegalArgumentException("Unknown state: " + stateParam);
+            throw new IllegalArgumentException("Состояние не известно: " + stateParam);
         }
         List<BookingDto> bookings = bookingService.getAllBookingsOfOwner(userId, state);
         log.info("Количество бронирований пользователя : " + bookings.size());

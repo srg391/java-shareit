@@ -26,8 +26,8 @@ public class ItemController {
     private final CommentService commentService;
 
     @GetMapping("/{itemId}")
-    public ItemWithBookingDto getItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
-        ItemWithBookingDto itemWithBookingDto = itemService.getItem(itemId, userId);
+    public ItemWithBookingDto getItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long itemId) {
+        ItemWithBookingDto itemWithBookingDto = itemService.getItem(userId, itemId);
         log.debug("Вещь с id :" + itemId);
         return itemWithBookingDto;
     }

@@ -16,11 +16,11 @@ import java.util.List;
 /**
  * TODO Sprint add-controllers.
  */
+@Validated
 @RestController
 @RequestMapping("/items")
 @Slf4j
 @RequiredArgsConstructor
-@Validated
 public class ItemController {
 
     private final ItemServiceImpl itemService;

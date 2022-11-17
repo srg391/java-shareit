@@ -29,7 +29,6 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemWithBookingDto getItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
-        if (true) throw new NotFoundException("Оторвалося");
         ItemWithBookingDto itemWithBookingDto = itemService.getItem(itemId, userId);
         log.debug("Вещь с id :" + itemId);
         return itemWithBookingDto;

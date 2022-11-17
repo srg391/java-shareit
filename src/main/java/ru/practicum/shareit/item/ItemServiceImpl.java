@@ -39,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
         final Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemId + " не существует!"));
         long ownerId = item.getOwner().getId();
-        if (ownerId != userId) {
+        if (ownerId != (userId)) {
             return itemMapper.createDtoItemWithBooking(item, null, null);
         }
         return getItemWithBooking(item, userId, itemId);

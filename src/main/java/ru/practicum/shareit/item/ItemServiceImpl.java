@@ -35,13 +35,11 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
 
     @Override
-    public ItemWithBookingDto getItem(long userId, long itemId) {
+    public ItemWithBookingDto getItem(long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemId + " не существует!"));
-        if (!item.getOwner().getId().equals(userId)) {
             return itemMapper.createDtoItemWithBooking(item, null, null);
-        }
-        return getItemWithBooking(item, userId, itemId);
+//        return getItemWithBooking(item, itemId);
     }
 
     private ItemWithBookingDto getItemWithBooking(Item item, long ownerId, long itemId) {

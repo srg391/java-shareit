@@ -35,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
 
     @Override
-    public ItemWithBookingDto getItem(long itemId, long userId) {
+    public ItemWithBookingDto getItem(long userId, long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemId + " не существует!"));
         if (!item.getOwner().getId().equals(userId)) {

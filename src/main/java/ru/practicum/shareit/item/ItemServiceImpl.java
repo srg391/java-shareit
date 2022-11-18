@@ -9,8 +9,8 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemWithBookingDto;
+import ru.practicum.shareit.dto.ItemDto;
+import ru.practicum.shareit.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemMapper;
 import ru.practicum.shareit.user.UserRepository;
@@ -36,17 +36,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemWithBookingDto getItem(long itemId, long userId) {
-        Item item;
-        Item item1 = null;
-        try {
-            item1 = itemRepository.findById(itemId)
-                    .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemId + " не существует!"));
-        } catch (NotFoundException e) {
-            System.out.println(e.getMessage());
-        }
-        item = item1;
-        long ownerId = item.getOwner().getId();
-        if (ownerId != (userId)) {
+        final Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemId + " не существует!"));
+        if (!item.getOwner().getId().equals(userId)) {
             return itemMapper.createDtoItemWithBooking(item, null, null);
         }
         return getItemWithBooking(item, userId, itemId);

@@ -8,8 +8,8 @@ import ru.practicum.shareit.Create;
 import ru.practicum.shareit.Update;
 import ru.practicum.shareit.item.comment.CommentService;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
-import ru.practicum.shareit.dto.ItemDto;
-import ru.practicum.shareit.dto.ItemWithBookingDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 
 import java.util.List;
 

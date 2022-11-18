@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
@@ -35,10 +35,16 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
 
     @Override
-    @Transactional
     public ItemWithBookingDto getItem(long itemId, long userId) {
-        final Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemId + " не существует!"));
+        Item item;
+        Item item1 = null;
+        try {
+            item1 = itemRepository.findById(itemId)
+                    .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemId + " не существует!"));
+        } catch (NotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        item = item1;
         long ownerId = item.getOwner().getId();
         if (ownerId != (userId)) {
             return itemMapper.createDtoItemWithBooking(item, null, null);
@@ -62,7 +68,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
     public List<ItemWithBookingDto> getAllItemsOfUser(long userId) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Хозяин c id=" + userId + " не существует!"));
@@ -78,7 +83,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
     public List<ItemDto> getItemsBySearch(String text) {
         if (text.isBlank()) {
             return Collections.emptyList();

@@ -2,7 +2,6 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.InvalidEmailException;
 import ru.practicum.shareit.exception.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -35,9 +34,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto createUser(UserDto userDto) {
-        if (userDto.getEmail() == null) {
-            throw new InvalidEmailException("Почта не может быть пустой!");
-        }
+//        if (userDto.getEmail() == null) {
+//            throw new InvalidEmailException("Почта не может быть пустой!");
+//        }
         User user = userMapper.createUser(userDto);
             User savedUser = userRepository.save(user);
             return userMapper.createDtoUser(savedUser);

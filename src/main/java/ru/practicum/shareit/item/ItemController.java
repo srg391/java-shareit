@@ -16,7 +16,6 @@ import java.util.List;
 /**
  * TODO Sprint add-controllers.
  */
-@Validated
 @RestController
 @RequestMapping("/items")
 @Slf4j

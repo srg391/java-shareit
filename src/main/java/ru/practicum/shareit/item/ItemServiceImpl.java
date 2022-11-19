@@ -17,7 +17,10 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,9 +36,18 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemWithBookingDto getItem(long userId, long itemId) {
-            Optional<Item> item = itemRepository.findById(itemId);
-            Item item1 = item.orElseThrow();
-//                return itemMapper.createDtoItemWithBooking(item1, null, null);
+        Item item;
+        Item item1 = null;
+        try {
+            item = itemRepository.findById(itemId)
+                    .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemId + " не существует!"));
+            item1 = item;
+        } catch (Exception e) {
+            System.out.printf("Ошибка" + e.getStackTrace());
+        }
+        if (!item1.getOwner().getId().equals(userId)) {
+            return itemMapper.createDtoItemWithBooking(item1, null, null);
+        }
         return getItemWithBooking(item1, userId, itemId);
     }
 

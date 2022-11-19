@@ -27,10 +27,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemWithBookingDto getItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long itemId) {
-        ItemWithBookingDto itemWithBookingDto = null;
-        if (itemId != null) {
-            itemWithBookingDto = itemService.getItem(userId, itemId);
-        }
+        ItemWithBookingDto itemWithBookingDto = itemService.getItem(userId, itemId);
         log.debug("Вещь с id :" + itemId);
         return itemWithBookingDto;
     }

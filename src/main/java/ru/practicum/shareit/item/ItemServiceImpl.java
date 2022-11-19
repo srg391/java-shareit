@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
@@ -34,21 +33,20 @@ public class ItemServiceImpl implements ItemService {
 
     private final BookingRepository bookingRepository;
 
+    @Transactional
     @Override
     public ItemWithBookingDto getItem(long userId, long itemId) {
-        Item item;
-        Item item1 = null;
-        try {
-            item = itemRepository.findById(itemId)
+         Item item = itemRepository.findById(itemId)
                     .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemId + " не существует!"));
-            item1 = item;
-        } catch (Exception e) {
+        try {
+            if (!item.getOwner().getId().equals(userId)) {
+                return itemMapper.createDtoItemWithBooking(item, null, null);
+            }
+        }
+        catch (Exception e) {
             System.out.printf("Ошибка" + e.getStackTrace());
         }
-        if (!item1.getOwner().getId().equals(userId)) {
-            return itemMapper.createDtoItemWithBooking(item1, null, null);
-        }
-        return getItemWithBooking(item1, userId, itemId);
+        return getItemWithBooking(item, userId, itemId);
     }
 
     private ItemWithBookingDto getItemWithBooking(Item item, long ownerId, long itemId) {
@@ -66,6 +64,7 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.createDtoItemWithBooking(item, last, next);
     }
 
+    @Transactional
     @Override
     public List<ItemWithBookingDto> getAllItemsOfUser(long userId) {
         User owner = userRepository.findById(userId)
@@ -80,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
         }
         return itemsFinal;
     }
-
+    @Transactional
     @Override
     public List<ItemDto> getItemsBySearch(String text) {
         if (text.isBlank()) {
@@ -94,8 +93,8 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.createDtoListItem(items);
     }
 
-    @Override
     @Transactional
+    @Override
     public ItemDto createItem(long userId, ItemDto itemDto) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Хозяин c id=" + userId + " не существует!"));
@@ -104,8 +103,8 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.createDtoItem(itemFromRepository);
     }
 
-    @Override
     @Transactional
+    @Override
     public ItemDto updateItem(long userId, ItemDto itemDto) {
         final Item item = itemRepository.findById(itemDto.getId())
                 .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemDto.getId() + " не существует!"));

@@ -36,16 +36,18 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public ItemWithBookingDto getItem(long userId, long itemId) {
-         Item item = itemRepository.findById(itemId)
-                    .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemId + " не существует!"));
+        ItemWithBookingDto itemWithBookingDto = null;
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь c id=" + itemId + " не существует!"));
+        if (!item.getOwner().getId().equals(userId)) {
+            return itemMapper.createDtoItemWithBooking(item, null, null);
+        }
         try {
-            if (!item.getOwner().getId().equals(userId)) {
-                return itemMapper.createDtoItemWithBooking(item, null, null);
-            }
+            itemWithBookingDto = getItemWithBooking(item, userId, itemId);
         } catch (Exception e) {
             System.out.printf("Ошибка" + e.getStackTrace());
         }
-        return getItemWithBooking(item, userId, itemId);
+        return itemWithBookingDto;
     }
 
     private ItemWithBookingDto getItemWithBooking(Item item, long ownerId, long itemId) {

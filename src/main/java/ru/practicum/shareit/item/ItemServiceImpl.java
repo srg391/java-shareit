@@ -42,8 +42,7 @@ public class ItemServiceImpl implements ItemService {
             if (!item.getOwner().getId().equals(userId)) {
                 return itemMapper.createDtoItemWithBooking(item, null, null);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.printf("Ошибка" + e.getStackTrace());
         }
         return getItemWithBooking(item, userId, itemId);
@@ -79,6 +78,7 @@ public class ItemServiceImpl implements ItemService {
         }
         return itemsFinal;
     }
+
     @Transactional
     @Override
     public List<ItemDto> getItemsBySearch(String text) {

@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
@@ -42,11 +42,7 @@ public class ItemServiceImpl implements ItemService {
         if (!item.getOwner().getId().equals(userId)) {
             return itemMapper.createDtoItemWithBooking(item, null, null);
         }
-        try {
-            itemWithBookingDto = getItemWithBooking(item, userId, itemId);
-        } catch (Exception e) {
-            System.out.printf("Ошибка" + e.getStackTrace());
-        }
+        itemWithBookingDto = getItemWithBooking(item, userId, itemId);
         return itemWithBookingDto;
     }
 

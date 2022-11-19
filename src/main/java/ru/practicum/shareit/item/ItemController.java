@@ -27,8 +27,13 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemWithBookingDto getItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long itemId) {
-        ItemWithBookingDto itemWithBookingDto = itemService.getItem(userId, itemId);
+        ItemWithBookingDto itemWithBookingDto = null;
+        try {
+        itemWithBookingDto = itemService.getItem(userId, itemId);
         log.debug("Вещь с id :" + itemId);
+        } catch (Exception e) {
+            System.out.printf("Ошибка" + e.getStackTrace());
+        }
         return itemWithBookingDto;
     }
 

@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.*;
 import ru.practicum.shareit.Create;
+import ru.practicum.shareit.Update;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 
 import javax.validation.constraints.NotBlank;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemWithBookingDto {
 
+    @NotNull(groups = {Update.class})
     private Long id;
     @NotBlank(groups = {Create.class})
     private String name;

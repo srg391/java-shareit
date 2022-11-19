@@ -32,7 +32,7 @@ public class ItemController {
         itemWithBookingDto = itemService.getItem(userId, itemId);
         log.debug("Вещь с id :" + itemId);
         } catch (Exception e) {
-            System.out.printf("Ошибка" + e.getStackTrace());
+            System.out.println("Ошибка" + e.getStackTrace());
         }
         return itemWithBookingDto;
     }

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.comment;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.comment.model.Comment;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class CommentMapper {
 
     public CommentDto createDtoComment(Comment comment) {

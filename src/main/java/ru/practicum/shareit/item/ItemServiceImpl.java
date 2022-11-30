@@ -17,10 +17,7 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,7 +67,7 @@ public class ItemServiceImpl implements ItemService {
                 .filter(i -> i.getOwner() == owner)
                 .collect(Collectors.toList());
         List<ItemWithBookingDto> itemsFinal = new ArrayList<>();
-        for (Item item: items) {
+        for (Item item : items) {
             ItemWithBookingDto itemWithBookingDto = getItemWithBooking(item, userId, item.getId());
             itemsFinal.add(itemWithBookingDto);
         }
@@ -109,15 +106,9 @@ public class ItemServiceImpl implements ItemService {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Хозяин c id=" + userId + " не существует!"));
         if (item.getOwner().getId().equals(owner.getId())) {
-            if (itemDto.getName() != null) {
-                item.setName(itemDto.getName());
-            }
-            if (itemDto.getDescription() != null) {
-                item.setDescription(itemDto.getDescription());
-            }
-            if (itemDto.getAvailable() != null) {
-                item.setAvailable(itemDto.getAvailable());
-            }
+            Optional.ofNullable(itemDto.getName()).ifPresent(n -> item.setName(n));
+            Optional.ofNullable(itemDto.getDescription()).ifPresent(d -> item.setDescription(d));
+            Optional.ofNullable(itemDto.getAvailable()).ifPresent(a -> item.setAvailable(a));
             itemRepository.save(item);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

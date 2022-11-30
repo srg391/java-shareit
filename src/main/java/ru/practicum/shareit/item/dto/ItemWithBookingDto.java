@@ -36,7 +36,7 @@ public class ItemWithBookingDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Booking {
-        Long id;
-        Long bookerId;
+        private Long id;
+        private Long bookerId;
     }
 }

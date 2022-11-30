@@ -45,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
         switch (state) {
             case ALL:
-                List<Booking> bookings = bookingRepository.findAllBookingsOfUser(user.getId());
+                List<Booking> bookings = bookingRepository.findByBooker_idOrderByIdDesc(user.getId());
                 return bookingMapper.createDtoListBooking(bookings);
             case CURRENT:
                 bookings = bookingRepository.findAllBookingsOfUserBetween(user.getId(), LocalDateTime.now(), LocalDateTime.now());

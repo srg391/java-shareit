@@ -1,8 +1,8 @@
 package ru.practicum.shareit.booking;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
+import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
 
 import java.time.LocalDateTime;
@@ -10,8 +10,7 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    @Query("SELECT b FROM Booking b WHERE b.booker.id = ?1 ORDER BY b.start DESC")
-    List<Booking> findAllBookingsOfUser(Long userId);
+    List<Booking> findByBooker_idOrderByIdDesc(Long userId);
 
     @Query("SELECT b FROM Booking b WHERE b.booker.id = ?1 AND b.start<?2 AND b.end > ?3 ORDER BY b.start DESC")
     List<Booking> findAllBookingsOfUserBetween(Long userId, LocalDateTime start, LocalDateTime end);

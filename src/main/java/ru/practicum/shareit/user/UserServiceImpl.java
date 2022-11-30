@@ -37,18 +37,21 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto createUser(UserDto userDto) {
+        User savedUser = validateUser(userDto);
+        return userMapper.createDtoUser(savedUser);
+    }
+
+    private User validateUser(UserDto userDto) {
         User savedUser = null;
         if (userDto.getEmail() != null) {
             if (!userDto.getEmail().contains(" ") && userDto.getEmail().matches(".+@.+\\.[a-z]+")) {
                 User user = userMapper.createUser(userDto);
                 savedUser = userRepository.save(user);
-            } else throw new InvalidEmailException("Email не соотвествует!");
+            } else {
+                throw new InvalidEmailException("Email не соотвествует!");
+            }
         }
-//        if (userDto.getEmail() == null) {
-//            throw new InvalidEmailException("Почта не может быть пустой!");
-//        }
-
-            return userMapper.createDtoUser(savedUser);
+        return savedUser;
     }
 
     @Override

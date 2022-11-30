@@ -30,7 +30,7 @@ public class BookingDto {
     @AllArgsConstructor
     @ToString
     public static class Booker {
-        Long id;
+        private Long id;
     }
 
     @Getter
@@ -40,7 +40,7 @@ public class BookingDto {
     @AllArgsConstructor
     @ToString
     public static class Item {
-        Long id;
-        String name;
+        private Long id;
+        private String name;
     }
 }

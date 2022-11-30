@@ -6,7 +6,8 @@ public enum BookingState {
     PAST,
     FUTURE,
     WAITING,
-    REJECTED, UNSUPPORTED_STATUS;
+    REJECTED,
+    UNSUPPORTED_STATUS;
 
     static BookingState from(String state) {
         for (BookingState value: BookingState.values()) {

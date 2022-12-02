@@ -27,7 +27,6 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final ItemMapper itemMapper;
-
     private final BookingRepository bookingRepository;
 
     @Transactional

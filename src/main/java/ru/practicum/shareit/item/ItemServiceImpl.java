@@ -53,7 +53,6 @@ public class ItemServiceImpl implements ItemService {
         Booking next = futureBookings.stream()
                 .findFirst()
                 .orElse(null);
-
         return itemMapper.createDtoItemWithBooking(item, last, next);
     }
 
@@ -73,7 +72,7 @@ public class ItemServiceImpl implements ItemService {
         return itemsFinal;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<ItemDto> getItemsBySearch(String text) {
         if (text.isBlank()) {

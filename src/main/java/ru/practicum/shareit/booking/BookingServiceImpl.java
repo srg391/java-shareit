@@ -57,10 +57,10 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllBookingsOfUserFuture(user.getId(), LocalDateTime.now());
                 return bookingMapper.createDtoListBooking(bookings);
             case WAITING:
-                bookings = bookingRepository.findAllBookingsOfUserWithStatus(user.getId(), BookingStatus.WAITING);
+                bookings = bookingRepository.findByBooker_idAndStatusOrderByIdDesc(user.getId(), BookingStatus.WAITING);
                 return bookingMapper.createDtoListBooking(bookings);
             case REJECTED:
-                bookings = bookingRepository.findAllBookingsOfUserWithStatus(user.getId(), BookingStatus.REJECTED);
+                bookings = bookingRepository.findByBooker_idAndStatusOrderByIdDesc(user.getId(), BookingStatus.REJECTED);
                 return bookingMapper.createDtoListBooking(bookings);
             default:
                 throw new BadRequestBookingException("{\"error\": \"Unknown state: UNSUPPORTED_STATUS\"}");

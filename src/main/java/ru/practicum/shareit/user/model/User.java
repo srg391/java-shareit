@@ -2,25 +2,27 @@ package ru.practicum.shareit.user.model;
 
 import lombok.*;
 
+import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "Имя не соотвествует!")
+
     private String name;
-    @NotBlank(message = "Адрес электронной почты не соотвествует!")
-    @Email(message = "Адрес электронной почты не соотвествует!")
+
+    @Column(name = "email", nullable = false, unique = true, length = 512)
+    @Email
     private String email;
 
 }

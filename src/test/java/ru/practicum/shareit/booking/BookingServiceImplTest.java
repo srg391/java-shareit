@@ -12,8 +12,8 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.StartAndEndBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingMapper;
-import ru.practicum.shareit.exception.BadOwnerException;
-import ru.practicum.shareit.exception.BadStatusForCommentException;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.NotOwnerException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
@@ -121,7 +121,7 @@ public class BookingServiceImplTest {
         when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booking));
         when(userRepository.findById(anyLong()))
-                .thenThrow(new BadOwnerException("Запрос может производить только владелец или бронирующий!"));
+                .thenThrow(new NotOwnerException("Запрос может производить только владелец или бронирующий!"));
 
         final var exception = assertThrows(RuntimeException.class, () -> bookingServiceImpl.updateBooking(userNotOwner.getId(), booking.getId(), false));
         assertEquals("Запрос может производить только владелец или бронирующий!", exception.getMessage());
@@ -134,7 +134,7 @@ public class BookingServiceImplTest {
     void updateBookingAlreadyApprovedWithExceptionTest() {
         bookingApproved = new Booking(1L, LocalDateTime.of(2021, 11, 3, 9, 55), LocalDateTime.of(2022, 11, 8, 19, 55), item, user, BookingStatus.APPROVED);
         when(bookingRepository.findById(anyLong()))
-                .thenThrow(new BadStatusForCommentException("Статус уже APPROVED!"));
+                .thenThrow(new BadRequestException("Статус уже APPROVED!"));
         final var exception = assertThrows(RuntimeException.class, () -> bookingServiceImpl.updateBooking(userNotOwner.getId(), bookingApproved.getId(), true));
         assertEquals("Статус уже APPROVED!", exception.getMessage());
 

@@ -65,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByBooker_idAndStatusOrderByIdDesc(user.getId(), BookingStatus.REJECTED, PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             default:
-                throw new BadRequestBookingException("{\"error\": \"Unknown state: UNSUPPORTED_STATUS\"}");
+                throw new IllegalArgumentException("Unknown state: UNSUPPORTED_STATUS");
         }
     }
 
@@ -101,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllBookingsOfItemOwnerWithStatus(itemsIds, BookingStatus.REJECTED, PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             default:
-                throw new BadRequestBookingException("{\"error\": \"Unknown state: UNSUPPORTED_STATUS\"}");
+                throw new IllegalArgumentException("Unknown state: UNSUPPORTED_STATUS");
         }
     }
 
@@ -111,12 +111,12 @@ public class BookingServiceImpl implements BookingService {
         final Item itemInRepository = itemRepository.findById(startAndEndBookingDto.getItemId())
                 .orElseThrow(() -> new NotFoundException("Вещь не существует!"));
         if (!itemInRepository.getAvailable()) {
-            throw new ItemNotAvailableException("Вещь не доступна для бронирования!");
+            throw new ItemIsNotAvailableException("Вещь не доступна для бронирования!");
         }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
         if (itemInRepository.getOwner().getId().equals(user.getId())) {
-            throw new BadOwnerException("Хозяин не найден!");
+            throw new NotFoundException("Хозяин не найден!");
         }
         Booking booking = bookingMapper.createBooking(startAndEndBookingDto, itemInRepository, user);
         booking.setBooker(user);
@@ -131,12 +131,12 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронирование c id=" + bookingId + " не существует!"));
         User owner = userRepository.findById(userId)
-                .orElseThrow(() -> new BadStatusBookingException("Пользователь c id=" + userId + " не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
         if (!booking.getItem().getOwner().getId().equals(owner.getId())) {
-            throw new BadOwnerException("Запрос может производить только владелец или бронирующий!");
+            throw new NotOwnerException("Запрос может производить только владелец или бронирующий!");
         }
         if (booking.getStatus() == BookingStatus.APPROVED) {
-            throw new BadStatusForCommentException("Статус уже APPROVED!");
+            throw new BadRequestException("Статус уже APPROVED!");
         }
         booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
         Booking updateBooking = bookingRepository.save(booking);

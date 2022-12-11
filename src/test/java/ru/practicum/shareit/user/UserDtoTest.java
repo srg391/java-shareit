@@ -22,4 +22,17 @@ public class UserDtoTest {
         assertThat(jsonResult).hasJsonPath("$.id");
         assertThat(jsonResult).extractingJsonPathNumberValue("$.id").isEqualTo(userDto.getId().intValue());
     }
+
+    @Test
+    void createUserTest() throws Exception {
+        UserDto userDto = jacksonTester.parseObject("{" +
+                " \"id\": \"1\", " +
+                "    \"name\": \"Sergey1\"," +
+                "    \"email\": \"sergey1@gmail.com\" " +
+                "}");
+
+        assertThat(userDto.getId()).isEqualTo(1L);
+        assertThat(userDto.getName()).isEqualTo("Sergey1");
+        assertThat(userDto.getEmail()).isEqualTo("sergey1@gmail.com");
+    }
 }

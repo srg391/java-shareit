@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageRequest;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.ItemRequestServiceImpl;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -45,11 +46,14 @@ public class ItemRequestServiceImplTest {
 
     private User user;
 
+    private Item item;
+
     @BeforeEach
     void beforeEach() {
         itemRequestServiceImpl = new ItemRequestServiceImpl(itemRequestRepository, userRepository, itemRequestMapper);
         user = new User(1L, "Sergey1", "sergey1@gmail.com");
         itemRequest = new ItemRequest(1L, "вещь", user, LocalDateTime.now());
+        item = new Item(1L, "вещь", "описание вещи", true, user, null);
         newestItemRequestDto = new NewestItemRequestDto("вещь");
     }
 
@@ -97,7 +101,6 @@ public class ItemRequestServiceImplTest {
         verify(itemRequestRepository, times(1)).getItemRequestsByRequesters(1L, PageRequest.of(0, 10));
     }
 
-
     @Test
     void getRequestTest() {
         when(userRepository.findById(anyLong()))
@@ -108,6 +111,5 @@ public class ItemRequestServiceImplTest {
         itemRequestServiceImpl.getRequest(user.getId(), itemRequest.getId());
         verify(itemRequestRepository, times(1)).findById(1L);
     }
-
 
 }

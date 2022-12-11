@@ -114,7 +114,7 @@ public class ItemServiceImplTest {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         itemServiceImpl.createItem(user.getId(), itemDto);
-        final String text = "дрель";
+        final String text = "вещь";
         final PageImpl<Item> itemPage = new PageImpl<>(Collections.singletonList(item));
         when(itemRepository.findAll(PageRequest.of(0, 10)))
                 .thenReturn(itemPage);

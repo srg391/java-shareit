@@ -13,6 +13,7 @@ import ru.practicum.shareit.booking.dto.StartAndEndBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingMapper;
 import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.ItemIsNotAvailableException;
 import ru.practicum.shareit.exception.NotOwnerException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
@@ -96,7 +97,7 @@ public class BookingServiceImplTest {
         Item itemNew = new Item(1L, "вещь", "описание вещи", false, user, 1L);
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(itemNew));
-        final var exception = assertThrows(RuntimeException.class, () -> bookingServiceImpl.createBooking(user.getId(), startAndEndBookingDto));
+        final var exception = assertThrows(ItemIsNotAvailableException.class, () -> bookingServiceImpl.createBooking(user.getId(), startAndEndBookingDto));
         assertEquals("Вещь не доступна для бронирования!", exception.getMessage());
         verify(itemRepository, times(1)).findById(1L);
     }
@@ -123,7 +124,7 @@ public class BookingServiceImplTest {
         when(userRepository.findById(anyLong()))
                 .thenThrow(new NotOwnerException("Запрос может производить только владелец или бронирующий!"));
 
-        final var exception = assertThrows(RuntimeException.class, () -> bookingServiceImpl.updateBooking(userNotOwner.getId(), booking.getId(), false));
+        final var exception = assertThrows(NotOwnerException.class, () -> bookingServiceImpl.updateBooking(userNotOwner.getId(), booking.getId(), false));
         assertEquals("Запрос может производить только владелец или бронирующий!", exception.getMessage());
 
         verify(bookingRepository, times(0)).save(booking);
@@ -135,7 +136,7 @@ public class BookingServiceImplTest {
         bookingApproved = new Booking(1L, LocalDateTime.of(2021, 11, 3, 9, 55), LocalDateTime.of(2022, 11, 8, 19, 55), item, user, BookingStatus.APPROVED);
         when(bookingRepository.findById(anyLong()))
                 .thenThrow(new BadRequestException("Статус уже APPROVED!"));
-        final var exception = assertThrows(RuntimeException.class, () -> bookingServiceImpl.updateBooking(userNotOwner.getId(), bookingApproved.getId(), true));
+        final var exception = assertThrows(BadRequestException.class, () -> bookingServiceImpl.updateBooking(userNotOwner.getId(), bookingApproved.getId(), true));
         assertEquals("Статус уже APPROVED!", exception.getMessage());
 
         verify(bookingRepository, times(0)).save(booking);

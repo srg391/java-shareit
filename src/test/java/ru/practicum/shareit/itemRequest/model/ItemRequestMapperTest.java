@@ -69,8 +69,16 @@ class ItemRequestMapperTest {
         item.setRequestId(1L);
         List<Item> items = new ArrayList<>();
         items.add(item);
-        ItemRequestDto itemRequestDto = new ItemRequestDto(1L, "вещь", LocalDateTime.of(2021, 11, 3, 9, 55), new ArrayList<>());
-        ItemRequest itemRequest = new ItemRequest(1L, "вещь", user, LocalDateTime.of(2021, 11, 3, 9, 55));
+        ItemRequestDto itemRequestDto = new ItemRequestDto();
+        itemRequestDto.setId(1L);
+        itemRequestDto.setDescription("вещь");
+        itemRequestDto.setCreated(LocalDateTime.of(2021, 11, 3, 9, 55));
+        itemRequestDto.setItems(new ArrayList<>());
+        ItemRequest itemRequest = new ItemRequest();
+        itemRequest.setId(1L);
+        itemRequest.setDescription("вещь");
+        itemRequest.setRequester(user);
+        itemRequest.setDateOfCreation(LocalDateTime.of(2021, 11, 3, 9, 55));
         assertEquals(itemRequest.getId(), itemRequestDto.getId());
         assertEquals(itemRequest.getDescription(), itemRequestDto.getDescription());
         assertEquals(itemRequest.getItems(), itemRequestDto.getItems());

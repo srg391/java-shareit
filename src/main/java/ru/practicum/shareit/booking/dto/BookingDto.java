@@ -23,21 +23,13 @@ public class BookingDto {
     private BookingStatus status;
 
     @Getter
-    @Setter
-    @EqualsAndHashCode(of = "id")
-    @NoArgsConstructor
     @AllArgsConstructor
-    @ToString
     public static class Booker {
         private Long id;
     }
 
     @Getter
-    @Setter
-    @EqualsAndHashCode(of = "id")
-    @NoArgsConstructor
     @AllArgsConstructor
-    @ToString
     public static class Item {
         private Long id;
         private String name;

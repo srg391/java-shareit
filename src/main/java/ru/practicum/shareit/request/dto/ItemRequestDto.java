@@ -22,7 +22,6 @@ public class ItemRequestDto {
 
     @Getter
     @Setter
-    @ToString
     @EqualsAndHashCode(of = "id")
     @AllArgsConstructor
     @NoArgsConstructor

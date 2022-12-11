@@ -1,6 +1,5 @@
 package ru.practicum.shareit.exception;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
@@ -13,14 +12,12 @@ import javax.validation.UnexpectedTypeException;
 import java.util.Map;
 
 @RestControllerAdvice
-@Slf4j
 public class ErrorHandler {
 
     @ExceptionHandler({NullPointerException.class,
             NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(Exception e) {
-        log.info("Error 404 {}", e.getMessage());
         return Map.of("Error 404", e.getMessage());
     }
 
@@ -32,7 +29,6 @@ public class ErrorHandler {
             IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationException(Exception e) {
-        log.info(e.getMessage());
         return Map.of("error", e.getMessage());
     }
 

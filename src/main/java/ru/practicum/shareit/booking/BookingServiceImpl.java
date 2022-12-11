@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -40,27 +41,28 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAllBookingsOfUser(long userId, BookingState state) {
+    public List<BookingDto> getAllBookingsOfUser(long userId, BookingState state, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
+        int page = from / size;
         switch (state) {
             case ALL:
-                List<Booking> bookings = bookingRepository.findByBooker_idOrderByIdDesc(user.getId());
+                List<Booking> bookings = bookingRepository.findByBooker_idOrderByIdDesc(user.getId(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case CURRENT:
-                bookings = bookingRepository.findAllBookingsOfUserBetween(user.getId(), LocalDateTime.now(), LocalDateTime.now());
+                bookings = bookingRepository.findAllBookingsOfUserBetween(user.getId(), LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case PAST:
-                bookings = bookingRepository.findAllBookingsOfUserPast(user.getId(), LocalDateTime.now());
+                bookings = bookingRepository.findAllBookingsOfUserPast(user.getId(), LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case FUTURE:
-                bookings = bookingRepository.findAllBookingsOfUserFuture(user.getId(), LocalDateTime.now());
+                bookings = bookingRepository.findAllBookingsOfUserFuture(user.getId(), LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case WAITING:
-                bookings = bookingRepository.findByBooker_idAndStatusOrderByIdDesc(user.getId(), BookingStatus.WAITING);
+                bookings = bookingRepository.findByBooker_idAndStatusOrderByIdDesc(user.getId(), BookingStatus.WAITING, PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case REJECTED:
-                bookings = bookingRepository.findByBooker_idAndStatusOrderByIdDesc(user.getId(), BookingStatus.REJECTED);
+                bookings = bookingRepository.findByBooker_idAndStatusOrderByIdDesc(user.getId(), BookingStatus.REJECTED, PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             default:
                 throw new BadRequestBookingException("{\"error\": \"Unknown state: UNSUPPORTED_STATUS\"}");
@@ -68,9 +70,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAllBookingsOfOwner(long userId, BookingState state) {
+    public List<BookingDto> getAllBookingsOfOwner(long userId, BookingState state, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
+        int page = from / size;
         List<Item> items = itemRepository.findAll().stream()
                 .filter(i -> i.getOwner() == user)
                 .collect(Collectors.toList());
@@ -80,22 +83,22 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case ALL:
-                List<Booking> bookings = bookingRepository.findAllBookingsOfItemOwner(itemsIds);
+                List<Booking> bookings = bookingRepository.findAllBookingsOfItemOwner(itemsIds, PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case CURRENT:
-                bookings = bookingRepository.findBookingsOfItemOwnerBetween(itemsIds, LocalDateTime.now(), LocalDateTime.now());
+                bookings = bookingRepository.findBookingsOfItemOwnerBetween(itemsIds, LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case PAST:
-                bookings = bookingRepository.findBookingsOfItemOwnerInPast(itemsIds, LocalDateTime.now());
+                bookings = bookingRepository.findBookingsOfItemOwnerInPast(itemsIds, LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case FUTURE:
-                bookings = bookingRepository.findBookingsOfItemOwnerInFuture(itemsIds, LocalDateTime.now());
+                bookings = bookingRepository.findBookingsOfItemOwnerInFuture(itemsIds, LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case WAITING:
-                bookings = bookingRepository.findAllBookingsOfItemOwnerWithStatus(itemsIds, BookingStatus.WAITING);
+                bookings = bookingRepository.findAllBookingsOfItemOwnerWithStatus(itemsIds, BookingStatus.WAITING, PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case REJECTED:
-                bookings = bookingRepository.findAllBookingsOfItemOwnerWithStatus(itemsIds, BookingStatus.REJECTED);
+                bookings = bookingRepository.findAllBookingsOfItemOwnerWithStatus(itemsIds, BookingStatus.REJECTED, PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             default:
                 throw new BadRequestBookingException("{\"error\": \"Unknown state: UNSUPPORTED_STATUS\"}");

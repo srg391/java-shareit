@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new NotFoundException("Вещь не существует!"));
         final User author = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
-        if (!bookingService.getAllBookingsOfUser(userId, BookingState.PAST).stream()
+        if (!bookingService.getAllBookingsOfUser(userId, BookingState.PAST, 0, 10).stream()
                 .anyMatch(b -> Objects.equals(b.getItem().getId(), itemInRepository.getId()))) {
             throw new BadStatusForCommentException("Вы можете оставить комментарий только после бронирования вещи!");
         }

@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ItemServiceImplTest {
 
-    ItemServiceImpl itemServiceImpl;
+    ItemService itemServiceImpl;
 
     @Mock
     ItemRepository itemRepository;

@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemRequestController {
 
-    private final ItemRequestServiceImpl itemRequestService;
+    private final ItemRequestService itemRequestService;
 
     @GetMapping("/{requestId}")
     public ItemRequestDto getRequest(@RequestHeader("X-Sharer-User-Id") long userId,

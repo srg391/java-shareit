@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BookingServiceImplTest {
-    BookingServiceImpl bookingServiceImpl;
+    BookingService bookingServiceImpl;
     @Mock
     BookingRepository bookingRepository;
     @Mock

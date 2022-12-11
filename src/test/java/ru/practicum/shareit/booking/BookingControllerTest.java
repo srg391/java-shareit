@@ -29,7 +29,7 @@ public class BookingControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    BookingServiceImpl bookingServiceImpl;
+    BookingService bookingServiceImpl;
     private BookingDto bookingDto;
     private StartAndEndBookingDto startAndEndBookingDto;
     String jsonContent;

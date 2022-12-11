@@ -17,7 +17,6 @@ public class UserDtoTest {
     @Test
     void createDtoUserTest() throws Exception {
         UserDto userDto = new UserDto(1L, "Sergey1", "sergey1@gmail.com");
-
         JsonContent<UserDto> jsonResult = jacksonTester.write(userDto);
         assertThat(jsonResult).hasJsonPath("$.id");
         assertThat(jsonResult).extractingJsonPathNumberValue("$.id").isEqualTo(userDto.getId().intValue());

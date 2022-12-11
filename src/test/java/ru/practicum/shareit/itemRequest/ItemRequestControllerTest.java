@@ -10,7 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.request.ItemRequestController;
-import ru.practicum.shareit.request.ItemRequestServiceImpl;
+import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.NewestItemRequestDto;
 
@@ -29,7 +29,7 @@ public class ItemRequestControllerTest {
     @Autowired
     MockMvc mockMvc;
     @MockBean
-    ItemRequestServiceImpl itemRequestServiceImpl;
+    ItemRequestService itemRequestServiceImpl;
     private ItemRequestDto itemRequestDto;
     private NewestItemRequestDto newestItemRequestDto;
 

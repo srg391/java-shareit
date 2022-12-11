@@ -1,7 +1,7 @@
 package ru.practicum.shareit.request.model;
 
 import lombok.NonNull;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.NewestItemRequestDto;
 import ru.practicum.shareit.user.model.User;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 public class ItemRequestMapper {
 
     public ItemRequestDto createDtoItemRequest(@NonNull ItemRequest itemRequest) {

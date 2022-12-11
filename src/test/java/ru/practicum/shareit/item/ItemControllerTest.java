@@ -9,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.item.comment.CommentServiceImpl;
+import ru.practicum.shareit.item.comment.CommentService;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
@@ -30,10 +30,10 @@ public class ItemControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    ItemServiceImpl itemServiceImpl;
+    ItemService itemServiceImpl;
 
     @MockBean
-    CommentServiceImpl commentServiceImpl;
+    CommentService commentServiceImpl;
     private final ObjectMapper objectMapper = new ObjectMapper();
     ItemDto itemDto;
 

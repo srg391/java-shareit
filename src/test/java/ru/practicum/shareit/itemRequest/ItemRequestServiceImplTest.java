@@ -10,6 +10,7 @@ import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.request.ItemRequestServiceImpl;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.NewestItemRequestDto;
@@ -32,7 +33,7 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ItemRequestServiceImplTest {
 
-    ItemRequestServiceImpl itemRequestServiceImpl;
+    ItemRequestService itemRequestServiceImpl;
     @Mock
     ItemRequestRepository itemRequestRepository;
     @Mock

@@ -8,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-@ToString
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor

@@ -2,7 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.InvalidEmailException;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
                 User user = userMapper.createUser(userDto);
                 savedUser = userRepository.save(user);
             } else {
-                throw new InvalidEmailException("Email не соотвествует!");
+                throw new BadRequestException("Email не соотвествует!");
             }
         }
         return savedUser;

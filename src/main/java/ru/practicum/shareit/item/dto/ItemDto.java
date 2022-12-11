@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
  */
 @Getter
 @Setter
-@ToString
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor

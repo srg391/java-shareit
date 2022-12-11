@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.comment;
 
-import ru.practicum.shareit.exception.BadStatusForCommentException;
 import ru.practicum.shareit.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,9 +31,9 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new NotFoundException("Вещь не существует!"));
         final User author = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
-        if (!bookingService.getAllBookingsOfUser(userId, BookingState.PAST).stream()
+        if (!bookingService.getAllBookingsOfUser(userId, BookingState.PAST, 0, 10).stream()
                 .anyMatch(b -> Objects.equals(b.getItem().getId(), itemInRepository.getId()))) {
-            throw new BadStatusForCommentException("Вы можете оставить комментарий только после бронирования вещи!");
+            throw new IllegalArgumentException("Вы можете оставить комментарий только после бронирования вещи!");
         }
 
         Comment comment = commentMapper.toComment(commentDto, author, itemInRepository);

@@ -8,6 +8,8 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.StartAndEndBookingDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -31,24 +33,28 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getBookingOfUser(@RequestHeader("X-Sharer-User-Id") long userId,
-                                              @RequestParam(name = "state", defaultValue = "ALL") String stateParam) {
+                                             @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
+                                             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
+                                             @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         BookingState state = BookingState.from(stateParam);
         if (state == null) {
             throw new IllegalArgumentException("Состояние не известно : " + stateParam);
         }
-        List<BookingDto> bookings = bookingService.getAllBookingsOfUser(userId, state);
+        List<BookingDto> bookings = bookingService.getAllBookingsOfUser(userId, state, from, size);
         log.debug("Количество бронирований : " + bookings.size());
         return bookings;
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getBookingOfOwner(@RequestHeader("X-Sharer-User-Id") long userId,
-                                              @RequestParam(name = "state", defaultValue = "ALL") String stateParam) {
+                                              @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
+                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
+                                              @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         BookingState state = BookingState.from(stateParam);
         if (state == null) {
             throw new IllegalArgumentException("Состояние не известно: " + stateParam);
         }
-        List<BookingDto> bookings = bookingService.getAllBookingsOfOwner(userId, state);
+        List<BookingDto> bookings = bookingService.getAllBookingsOfOwner(userId, state, from, size);
         log.info("Количество бронирований пользователя : " + bookings.size());
         return bookings;
     }

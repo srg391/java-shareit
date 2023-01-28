@@ -5,9 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * TODO Sprint add-item-requests.
- */
+
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")

@@ -1,20 +1,10 @@
 package ru.practicum.shareit.itemRequest.model;
 
-import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.boot.test.json.JsonContent;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.ItemRequestRepository;
-import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.NewestItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.model.ItemRequestMapper;
 import ru.practicum.shareit.user.model.User;
@@ -23,65 +13,78 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+public class ItemRequestMapperTest {
 
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
-@JsonTest
-class ItemRequestMapperTest {
-
-    ItemRequestService itemRequestServiceImpl;
-
-    @Mock
     private ItemRequestMapper itemRequestMapper;
 
-    @Mock
-    private ItemRequestRepository itemRequestRepository;
+    private User user;
+    private ItemRequest itemRequest1;
 
-    private Item item1;
+    private ItemRequest itemRequest2;
 
-    private Item item2;
-    @Autowired
-    private JacksonTester<ItemRequestDto> jacksonTester;
-
-    @SneakyThrows
-    @Test
-    void createDtoItemRequestTest() {
-        ItemRequestDto itemRequestDto = new ItemRequestDto(1L, "вещь", LocalDateTime.now(), null);
-        JsonContent<ItemRequestDto> jsonResult = jacksonTester.write(itemRequestDto);
-
-        assertThat(jsonResult).hasJsonPath("$.id");
-        assertThat(jsonResult).hasJsonPath("$.description");
-        assertThat(jsonResult).extractingJsonPathValue("$.description").isEqualTo(itemRequestDto.getDescription());
+    @BeforeEach
+    void beforeEach() {
+        itemRequestMapper = new ItemRequestMapper();
+        user = new User(1L, "Sergey1", "sergey1@gmail.com");
+        itemRequest1 = new ItemRequest(1L, "вещь", user, LocalDateTime.of(2021, 11, 3, 9, 55));
+        itemRequest2 = new ItemRequest(2L, "другая вещь", user, LocalDateTime.of(2021, 11, 3, 10, 55));
     }
 
     @Test
     void createItemRequestTest() {
-        User user = new User(1L, "Sergey1", "sergey1@gmail.com");
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("вещь");
-        item.setDescription("описание вещи");
-        item.setAvailable(true);
-        item.setOwner(user);
-        item.setRequestId(1L);
-        List<Item> items = new ArrayList<>();
-        items.add(item);
-        ItemRequestDto itemRequestDto = new ItemRequestDto();
-        itemRequestDto.setId(1L);
-        itemRequestDto.setDescription("вещь");
-        itemRequestDto.setCreated(LocalDateTime.of(2021, 11, 3, 9, 55));
-        itemRequestDto.setItems(new ArrayList<>());
-        ItemRequest itemRequest = new ItemRequest();
-        itemRequest.setId(1L);
-        itemRequest.setDescription("вещь");
-        itemRequest.setRequester(user);
-        itemRequest.setDateOfCreation(LocalDateTime.of(2021, 11, 3, 9, 55));
-        assertEquals(itemRequest.getId(), itemRequestDto.getId());
-        assertEquals(itemRequest.getDescription(), itemRequestDto.getDescription());
-        assertEquals(itemRequest.getItems(), itemRequestDto.getItems());
+        List items = new ArrayList<>();
+        NewestItemRequestDto itemRequestDto1 = new NewestItemRequestDto("вещь");
+        NewestItemRequestDto itemRequestDto2 = new NewestItemRequestDto("другая вещь");
+
+        ItemRequest itemRequestNew1 = itemRequestMapper.createItemRequest(itemRequestDto1, LocalDateTime.of(2021, 11, 3, 9, 55), user);
+        ItemRequest itemRequestNew2 = itemRequestMapper.createItemRequest(itemRequestDto2, LocalDateTime.of(2021, 11, 3, 10, 55), user);
+
+        assertEquals(itemRequestNew1.getDescription(), itemRequest1.getDescription());
+        assertEquals(itemRequestNew2.getDescription(), itemRequest2.getDescription());
     }
 
+    @Test
+    void createDtoItemRequestTest() {
+        List items = new ArrayList<>();
+        User user1 = new User(2L, "Valery2", "valery2@mail.ru");
+        Item item1 = new Item(1L, "вещь", "описание вещи", true, user1, 1L);
+        Item item2 = new Item(2L, "другая вещь", "описание другой вещи", true, user1, 2L);
+        items.add(item1);
+        items.add(item2);
+
+        NewestItemRequestDto itemRequestDto1 = new NewestItemRequestDto("вещь");
+        NewestItemRequestDto itemRequestDto2 = new NewestItemRequestDto("другая вещь");
+
+        ItemRequestDto itemRequestDtoNew1 = itemRequestMapper.createDtoItemRequest(itemRequest1);
+        ItemRequestDto itemRequestDtoNew2 = itemRequestMapper.createDtoItemRequest(itemRequest2);
+
+        assertEquals(itemRequestDtoNew1.getDescription(), itemRequestDto1.getDescription());
+        assertEquals(itemRequestDtoNew2.getDescription(), itemRequestDto2.getDescription());
+
+        ItemRequestDto itemRequestDtoThing1 = new ItemRequestDto(1L, "вещь", LocalDateTime.of(2021, 11, 3, 9, 55), items);
+
+        assertEquals(itemRequestDtoThing1.getItems(), items);
+    }
+
+    @Test
+    void createDtoListItemRequestTest() {
+        ItemRequestDto itemRequestDtoNew1 = itemRequestMapper.createDtoItemRequest(itemRequest1);
+        ItemRequestDto itemRequestDtoNew2 = itemRequestMapper.createDtoItemRequest(itemRequest2);
+
+        List<ItemRequest> itemRequests = new ArrayList<>();
+        itemRequests.add(itemRequest1);
+        itemRequests.add(itemRequest2);
+
+
+
+        List<ItemRequestDto> itemRequestsDtoNew = new ArrayList<>();
+        itemRequestsDtoNew.add(itemRequestDtoNew1);
+        itemRequestsDtoNew.add(itemRequestDtoNew2);
+
+        List<ItemRequestDto> itemRequestDto = itemRequestMapper.createDtoItemRequestList(itemRequests);
+
+        assertEquals(itemRequestDto, itemRequestsDtoNew);
+    }
 }

@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserMapper;
@@ -56,6 +58,21 @@ class UserServiceImplTest {
     }
 
     @Test
+    void createWrongRegExpEmailUserTest() {
+        UserDto userDto1 = new UserDto(1L, "Sergey1", "sergey1@gmail");
+        assertThrows(BadRequestException.class, () -> userServiceImpl.createUser(userDto1));
+    }
+
+    @Test
+    void createNullEmailUserTest() {
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(user1));
+        UserDto userDto1 = new UserDto(1L, "Sergey1", null);
+        userServiceImpl.createUser(userDto1);
+        verify(userRepository, times(0)).save(user1);
+    }
+
+    @Test
     void getUserTest() {
         when(userRepository.findById(1L))
                 .thenReturn(Optional.of(user1));
@@ -66,6 +83,16 @@ class UserServiceImplTest {
                 .thenReturn(Optional.of(user2));
         userServiceImpl.getUser(2L);
         verify(userRepository, times(1)).findById(2L);
+    }
+
+    @Test
+    void testGetUserByWrongId() {
+        assertThrows(NotFoundException.class, () -> userServiceImpl.getUser(330L));
+    }
+
+    @Test
+    void testDeleteWrongId() {
+        assertThrows(NotFoundException.class, () -> userServiceImpl.deleteByUserId(330L));
     }
 
     @Test
@@ -96,6 +123,14 @@ class UserServiceImplTest {
         userServiceImpl.deleteByUserId(1L);
         verify(userRepository, times(1)).save(user1);
         verify(userRepository, times(1)).delete(user1);
+    }
+
+    @Test
+    void testUpdateUserByWrongId() {
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.empty());
+        UserDto userDto1 = new UserDto(1L, "Sergey1 update", "sergey1@gmail.com");
+        assertThrows(NotFoundException.class, () -> userServiceImpl.updateUser(330L, userDto1));
     }
 
     @Test

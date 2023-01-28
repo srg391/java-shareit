@@ -14,6 +14,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingMapper;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ItemIsNotAvailableException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.NotOwnerException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
@@ -103,6 +104,17 @@ public class BookingServiceImplTest {
     }
 
     @Test
+    void createBookingWithItemNotFoundExceptionTest() {
+        User user3 = new User();
+        Item itemNew = new Item(1L, "вещь", "описание вещи", true, user3, 1L);
+        when(itemRepository.findById(anyLong()))
+                .thenReturn(Optional.of(itemNew));
+        final var exception = assertThrows(NotFoundException.class, () -> bookingServiceImpl.createBooking(user.getId(), startAndEndBookingDto));
+        assertEquals("Пользователь c id=1 не существует!", exception.getMessage());
+        verify(itemRepository, times(1)).findById(1L);
+    }
+
+    @Test
     void updateBookingTest() {
         when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booking));
@@ -186,4 +198,15 @@ public class BookingServiceImplTest {
 
         verify(bookingRepository, times(1)).findAllBookingsOfItemOwner(List.of(1L), PageRequest.of(0, 10));
     }
+
+    @Test
+    void testGetBookingByIdNotUser() {
+        assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBooking(3L, 1L));
+    }
+
+    @Test
+    void testGetBookingByIdNotFound() {
+        assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBooking(3L, 10L));
+    }
+
 }

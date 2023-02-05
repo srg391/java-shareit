@@ -167,6 +167,17 @@ public class BookingServiceImplTest {
     }
 
     @Test
+    void getBookingWithNotFoundExceptionTest() {
+        User userNotOwner1 = new User(3L, "Denis3", "denis3@mail.ru");
+        when(bookingRepository.findById(anyLong()))
+                .thenReturn(Optional.of(booking));
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(userNotOwner1));
+
+        assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBooking(3L, 1L));
+    }
+
+    @Test
     void getAllBookingsOfUserTest() {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(userNotOwner));
@@ -179,6 +190,86 @@ public class BookingServiceImplTest {
         assertNotNull(bookingsDto);
 
         verify(bookingRepository, times(1)).findByBooker_idOrderByIdDesc(2L, PageRequest.of(0, 10));
+    }
+
+    @Test
+    void getAllBookingsOfUserBetweenTest() {
+        LocalDateTime start = LocalDateTime.of(2021, 11, 2, 9, 55);
+        LocalDateTime end = LocalDateTime.of(2022, 11, 9, 19, 55);
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(userNotOwner));
+        final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
+        when(bookingRepository.findAllBookingsOfUserBetween(anyLong(), any(), any(), PageRequest.of(anyInt(), 10)))
+                .thenReturn(bookings);
+
+        final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfUser(userNotOwner.getId(), BookingState.CURRENT, 0, 10);
+
+        assertNotNull(bookingsDto);
+
+        verify(bookingRepository, times(0)).findAllBookingsOfUserBetween(2L, start, end, PageRequest.of(0, 10));
+    }
+
+    @Test
+    void getAllBookingsOfUserPastTest() {
+        LocalDateTime start = LocalDateTime.of(2021, 11, 2, 9, 55);
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(userNotOwner));
+        final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
+        when(bookingRepository.findAllBookingsOfUserPast(anyLong(), any(), PageRequest.of(anyInt(), 10)))
+                .thenReturn(bookings);
+
+        final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfUser(userNotOwner.getId(), BookingState.PAST, 0, 10);
+
+        assertNotNull(bookingsDto);
+
+        verify(bookingRepository, times(0)).findAllBookingsOfUserPast(2L, start, PageRequest.of(0, 10));
+    }
+
+    @Test
+    void getAllBookingsOfUserFutureTest() {
+        LocalDateTime start = LocalDateTime.of(2021, 11, 2, 9, 55);
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(userNotOwner));
+        final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
+        when(bookingRepository.findAllBookingsOfUserFuture(anyLong(), any(), PageRequest.of(anyInt(), 10)))
+                .thenReturn(bookings);
+
+        final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfUser(userNotOwner.getId(), BookingState.FUTURE, 0, 10);
+
+        assertNotNull(bookingsDto);
+
+        verify(bookingRepository, times(0)).findAllBookingsOfUserFuture(2L, start, PageRequest.of(0, 10));
+    }
+
+    @Test
+    void findByBooker_idAndStatusOrderByIdDescWAITINGTest() {
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(userNotOwner));
+        final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
+        when(bookingRepository.findByBooker_idAndStatusOrderByIdDesc(anyLong(), any(), PageRequest.of(anyInt(), 10)))
+                .thenReturn(bookings);
+
+        final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfUser(userNotOwner.getId(), BookingState.WAITING, 0, 10);
+
+        assertNotNull(bookingsDto);
+
+        verify(bookingRepository, times(1)).findByBooker_idAndStatusOrderByIdDesc(2L, BookingStatus.WAITING, PageRequest.of(0, 10));
+    }
+
+    @Test
+    void findByBooker_idAndStatusOrderByIdDescREJECTEDTest() {
+        Booking bookingByNewUser1 = new Booking(1L, LocalDateTime.of(2021, 11, 3, 9, 55), LocalDateTime.of(2022, 11, 8, 19, 55), item, userNotOwner, BookingStatus.REJECTED);
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(userNotOwner));
+        final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser1));
+        when(bookingRepository.findByBooker_idAndStatusOrderByIdDesc(anyLong(), any(), PageRequest.of(anyInt(), 10)))
+                .thenReturn(bookings);
+
+        final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfUser(userNotOwner.getId(), BookingState.REJECTED, 0, 10);
+
+        assertNotNull(bookingsDto);
+
+        verify(bookingRepository, times(1)).findByBooker_idAndStatusOrderByIdDesc(2L, BookingStatus.REJECTED, PageRequest.of(0, 10));
     }
 
     @Test
@@ -197,6 +288,101 @@ public class BookingServiceImplTest {
         assertNotNull(bookingsDto);
 
         verify(bookingRepository, times(1)).findAllBookingsOfItemOwner(List.of(1L), PageRequest.of(0, 10));
+    }
+
+    @Test
+    void getAllBookingsOfOwnerBetweenTest() {
+        LocalDateTime start = LocalDateTime.of(2021, 11, 2, 9, 55);
+        LocalDateTime end = LocalDateTime.of(2022, 11, 9, 19, 55);
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        final List<Item> items = new ArrayList<>(Collections.singletonList(item));
+        when(itemRepository.findAll())
+                .thenReturn(items);
+        final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
+        when(bookingRepository.findBookingsOfItemOwnerBetween(any(), any(), any(), PageRequest.of(anyInt(), 10)))
+                .thenReturn(bookings);
+
+        final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfOwner(user.getId(), BookingState.CURRENT, 0, 10);
+
+        assertNotNull(bookingsDto);
+
+        verify(bookingRepository, times(0)).findBookingsOfItemOwnerBetween(List.of(1L), start, end, PageRequest.of(0, 10));
+    }
+
+    @Test
+    void getAllBookingsOfOwnerPastTest() {
+        LocalDateTime start = LocalDateTime.of(2021, 11, 2, 9, 55);
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        final List<Item> items = new ArrayList<>(Collections.singletonList(item));
+        when(itemRepository.findAll())
+                .thenReturn(items);
+        final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
+        when(bookingRepository.findBookingsOfItemOwnerInPast(any(), any(), PageRequest.of(anyInt(), 10)))
+                .thenReturn(bookings);
+
+        final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfOwner(user.getId(), BookingState.PAST, 0, 10);
+
+        assertNotNull(bookingsDto);
+
+        verify(bookingRepository, times(0)).findBookingsOfItemOwnerInPast(List.of(1L), start, PageRequest.of(0, 10));
+    }
+
+    @Test
+    void getAllBookingsOfOwnerFutureTest() {
+        LocalDateTime start = LocalDateTime.of(2021, 11, 2, 9, 55);
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        final List<Item> items = new ArrayList<>(Collections.singletonList(item));
+        when(itemRepository.findAll())
+                .thenReturn(items);
+        final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
+        when(bookingRepository.findBookingsOfItemOwnerInFuture(any(), any(), PageRequest.of(anyInt(), 10)))
+                .thenReturn(bookings);
+
+        final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfOwner(user.getId(), BookingState.FUTURE, 0, 10);
+
+        assertNotNull(bookingsDto);
+
+        verify(bookingRepository, times(0)).findBookingsOfItemOwnerInFuture(List.of(1L), start, PageRequest.of(0, 10));
+    }
+
+    @Test
+    void getAllBookingsOfItemOwnerWithStatusWAITINGTest() {
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        final List<Item> items = new ArrayList<>(Collections.singletonList(item));
+        when(itemRepository.findAll())
+                .thenReturn(items);
+        final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
+        when(bookingRepository.findAllBookingsOfItemOwnerWithStatus(any(), any(), PageRequest.of(anyInt(), 10)))
+                .thenReturn(bookings);
+
+        final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfOwner(user.getId(), BookingState.WAITING, 0, 10);
+
+        assertNotNull(bookingsDto);
+
+        verify(bookingRepository, times(1)).findAllBookingsOfItemOwnerWithStatus(List.of(1L), BookingStatus.WAITING, PageRequest.of(0, 10));
+    }
+
+    @Test
+    void getAllBookingsOfItemOwnerWithStatusREJECTEDTest() {
+        Booking bookingByNewUser1 = new Booking(1L, LocalDateTime.of(2021, 11, 3, 9, 55), LocalDateTime.of(2022, 11, 8, 19, 55), item, userNotOwner, BookingStatus.REJECTED);
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        final List<Item> items = new ArrayList<>(Collections.singletonList(item));
+        when(itemRepository.findAll())
+                .thenReturn(items);
+        final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser1));
+        when(bookingRepository.findAllBookingsOfItemOwnerWithStatus(any(), any(), PageRequest.of(anyInt(), 10)))
+                .thenReturn(bookings);
+
+        final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfOwner(user.getId(), BookingState.REJECTED, 0, 10);
+
+        assertNotNull(bookingsDto);
+
+        verify(bookingRepository, times(1)).findAllBookingsOfItemOwnerWithStatus(List.of(1L), BookingStatus.REJECTED, PageRequest.of(0, 10));
     }
 
     @Test

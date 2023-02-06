@@ -18,6 +18,8 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
+    private final int from = 0;
+    private final int size = 10;
     private final CommentRepository commentRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
@@ -31,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new NotFoundException("Вещь не существует!"));
         final User author = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c id=" + userId + " не существует!"));
-        if (!bookingService.getAllBookingsOfUser(userId, BookingState.PAST, 0, 10).stream()
+        if (!bookingService.getAllBookingsOfUser(userId, BookingState.PAST, from, size).stream()
                 .anyMatch(b -> Objects.equals(b.getItem().getId(), itemInRepository.getId()))) {
             throw new IllegalArgumentException("Вы можете оставить комментарий только после бронирования вещи!");
         }

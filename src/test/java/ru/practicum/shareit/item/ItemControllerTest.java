@@ -27,15 +27,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ItemControllerTest {
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @MockBean
-    ItemService itemServiceImpl;
+    private ItemService itemServiceImpl;
 
     @MockBean
-    CommentService commentServiceImpl;
+    private CommentService commentServiceImpl;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    ItemDto itemDto;
+    private ItemDto itemDto;
 
     @BeforeEach
     void beforeEach() {

@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BookingMapperTest {
     private BookingMapper bookingMapper;
 
-    CommentMapper commentMapper;
+    private CommentMapper commentMapper;
 
-    ItemMapper itemMapper;
+    private ItemMapper itemMapper;
 
     private User user1;
 

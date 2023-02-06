@@ -33,13 +33,13 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ItemRequestServiceImplTest {
 
-    ItemRequestService itemRequestServiceImpl;
+    private ItemRequestService itemRequestServiceImpl;
     @Mock
-    ItemRequestRepository itemRequestRepository;
+    private ItemRequestRepository itemRequestRepository;
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Mock
-    ItemRequestMapper itemRequestMapper;
+    private ItemRequestMapper itemRequestMapper;
 
     private ItemRequest itemRequest;
 

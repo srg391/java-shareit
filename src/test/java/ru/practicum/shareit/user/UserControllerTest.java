@@ -24,10 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
 
     @MockBean
-    UserServiceImpl userServiceImpl;
+    private UserServiceImpl userServiceImpl;
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     private UserDto userDto;
     private final ObjectMapper objectMapper = new ObjectMapper();

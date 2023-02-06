@@ -30,17 +30,17 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class CommentServiceImplTest {
-    CommentServiceImpl commentServiceImpl;
+    private CommentServiceImpl commentServiceImpl;
     @Mock
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
     @Mock
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Mock
-    BookingServiceImpl bookingServiceImpl;
+    private BookingServiceImpl bookingServiceImpl;
     @Mock
-    CommentMapper commentMapper;
+    private CommentMapper commentMapper;
 
     private Comment comment;
     private User user1;

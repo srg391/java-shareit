@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class UserServiceImplTest {
-    UserService userServiceImpl;
+    private UserService userServiceImpl;
 
     @Mock
     private UserRepository userRepository;
@@ -135,8 +135,10 @@ class UserServiceImplTest {
 
     @Test
     void getUserWithExceptionTest() {
-        when(userRepository.findById(1L));
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.empty());
         final RuntimeException exception = assertThrows(RuntimeException.class, () -> userServiceImpl.getUser(1L));
         verify(userRepository, times(1)).findById(1L);
+        assertEquals("Пользователь c id=" + 1L + " не существует!", exception.getMessage());
     }
 }

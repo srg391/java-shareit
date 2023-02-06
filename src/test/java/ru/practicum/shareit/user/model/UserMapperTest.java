@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserMapperTest {
 
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
     private User user1;
 

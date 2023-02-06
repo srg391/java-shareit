@@ -44,8 +44,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private ItemWithBookingDto getItemWithBooking(Item item, long ownerId, long itemId) {
-        List<Booking> lastBookings = bookingRepository.findLastBookings(ownerId, itemId, LocalDateTime.now(), BookingStatus.APPROVED);
-        List<Booking> futureBookings = bookingRepository.findFutureBookings(ownerId, itemId, LocalDateTime.now(), BookingStatus.APPROVED);
+        List<Booking> lastBookings = bookingRepository.findByItem_owner_idAndItem_idAndEndLessThanAndStatusOrderByStartDesc(ownerId, itemId, LocalDateTime.now(), BookingStatus.APPROVED);
+        List<Booking> futureBookings = bookingRepository.findByItem_owner_idAndItem_idAndStartGreaterThanAndStatusOrderByStartDesc(ownerId, itemId, LocalDateTime.now(), BookingStatus.APPROVED);
 
         Booking last = lastBookings.stream()
                 .max(Comparator.comparing(Booking::getEnd))

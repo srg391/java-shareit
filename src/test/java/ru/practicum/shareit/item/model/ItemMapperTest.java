@@ -18,8 +18,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ItemMapperTest {
-    CommentMapper commentMapper;
-    ItemMapper itemMapper;
+    private CommentMapper commentMapper;
+    private ItemMapper itemMapper;
 
     private User user1;
 

@@ -50,13 +50,13 @@ public class BookingServiceImpl implements BookingService {
                 List<Booking> bookings = bookingRepository.findByBooker_idOrderByIdDesc(user.getId(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case CURRENT:
-                bookings = bookingRepository.findAllBookingsOfUserBetween(user.getId(), LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(page, size));
+                bookings = bookingRepository.findByBooker_idAndStartLessThanAndEndGreaterThanOrderByStartDesc(user.getId(), LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case PAST:
-                bookings = bookingRepository.findAllBookingsOfUserPast(user.getId(), LocalDateTime.now(), PageRequest.of(page, size));
+                bookings = bookingRepository.findByBooker_idAndEndLessThanOrderByStartDesc(user.getId(), LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case FUTURE:
-                bookings = bookingRepository.findAllBookingsOfUserFuture(user.getId(), LocalDateTime.now(), PageRequest.of(page, size));
+                bookings = bookingRepository.findByBooker_idAndStartGreaterThanOrderByStartDesc(user.getId(), LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case WAITING:
                 bookings = bookingRepository.findByBooker_idAndStatusOrderByIdDesc(user.getId(), BookingStatus.WAITING, PageRequest.of(page, size));
@@ -83,22 +83,22 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case ALL:
-                List<Booking> bookings = bookingRepository.findAllBookingsOfItemOwner(itemsIds, PageRequest.of(page, size));
+                List<Booking> bookings = bookingRepository.findByItem_idInOrderByStartDesc(itemsIds, PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case CURRENT:
-                bookings = bookingRepository.findBookingsOfItemOwnerBetween(itemsIds, LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(page, size));
+                bookings = bookingRepository.findByItem_idInAndStartLessThanAndEndGreaterThanOrderByStartDesc(itemsIds, LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case PAST:
-                bookings = bookingRepository.findBookingsOfItemOwnerInPast(itemsIds, LocalDateTime.now(), PageRequest.of(page, size));
+                bookings = bookingRepository.findByItem_idInAndEndLessThanOrderByStartDesc(itemsIds, LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case FUTURE:
-                bookings = bookingRepository.findBookingsOfItemOwnerInFuture(itemsIds, LocalDateTime.now(), PageRequest.of(page, size));
+                bookings = bookingRepository.findByItem_idInAndStartGreaterThanOrderByStartDesc(itemsIds, LocalDateTime.now(), PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case WAITING:
-                bookings = bookingRepository.findAllBookingsOfItemOwnerWithStatus(itemsIds, BookingStatus.WAITING, PageRequest.of(page, size));
+                bookings = bookingRepository.findByItem_idInAndStatusOrderByStartDesc(itemsIds, BookingStatus.WAITING, PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             case REJECTED:
-                bookings = bookingRepository.findAllBookingsOfItemOwnerWithStatus(itemsIds, BookingStatus.REJECTED, PageRequest.of(page, size));
+                bookings = bookingRepository.findByItem_idInAndStatusOrderByStartDesc(itemsIds, BookingStatus.REJECTED, PageRequest.of(page, size));
                 return bookingMapper.createDtoListBooking(bookings);
             default:
                 throw new IllegalArgumentException("Unknown state: UNSUPPORTED_STATUS");

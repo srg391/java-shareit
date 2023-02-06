@@ -35,15 +35,15 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BookingServiceImplTest {
-    BookingService bookingServiceImpl;
+    private BookingService bookingServiceImpl;
     @Mock
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
     @Mock
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Mock
-    BookingMapper bookingMapper;
+    private BookingMapper bookingMapper;
     private StartAndEndBookingDto startAndEndBookingDto;
     private Booking booking;
     private Item item;
@@ -86,9 +86,10 @@ public class BookingServiceImplTest {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
 
-        when(itemRepository.findById(1L));
+        when(itemRepository.findById(1L))
+                .thenReturn(Optional.of(item));
         final var exception = assertThrows(RuntimeException.class, () -> bookingServiceImpl.createBooking(user.getId(), startAndEndBookingDto));
-
+        assertEquals("Хозяин не найден!", exception.getMessage());
         verify(itemRepository, times(1)).findById(1L);
         verify(bookingRepository, times(0)).save(booking);
     }
@@ -174,7 +175,8 @@ public class BookingServiceImplTest {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(userNotOwner1));
 
-        assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBooking(3L, 1L));
+        final RuntimeException exception = assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBooking(3L, 1L));
+        assertEquals("Запрос может производить только владелец или бронирующий!", exception.getMessage());
     }
 
     @Test
@@ -199,14 +201,14 @@ public class BookingServiceImplTest {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(userNotOwner));
         final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
-        when(bookingRepository.findAllBookingsOfUserBetween(anyLong(), any(), any(), PageRequest.of(anyInt(), 10)))
+        when(bookingRepository.findByBooker_idAndStartLessThanAndEndGreaterThanOrderByStartDesc(anyLong(), any(), any(), PageRequest.of(anyInt(), 10)))
                 .thenReturn(bookings);
 
         final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfUser(userNotOwner.getId(), BookingState.CURRENT, 0, 10);
 
         assertNotNull(bookingsDto);
 
-        verify(bookingRepository, times(0)).findAllBookingsOfUserBetween(2L, start, end, PageRequest.of(0, 10));
+        verify(bookingRepository, times(0)).findByBooker_idAndStartLessThanAndEndGreaterThanOrderByStartDesc(2L, start, end, PageRequest.of(0, 10));
     }
 
     @Test
@@ -215,14 +217,14 @@ public class BookingServiceImplTest {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(userNotOwner));
         final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
-        when(bookingRepository.findAllBookingsOfUserPast(anyLong(), any(), PageRequest.of(anyInt(), 10)))
+        when(bookingRepository.findByBooker_idAndEndLessThanOrderByStartDesc(anyLong(), any(), PageRequest.of(anyInt(), 10)))
                 .thenReturn(bookings);
 
         final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfUser(userNotOwner.getId(), BookingState.PAST, 0, 10);
 
         assertNotNull(bookingsDto);
 
-        verify(bookingRepository, times(0)).findAllBookingsOfUserPast(2L, start, PageRequest.of(0, 10));
+        verify(bookingRepository, times(0)).findByBooker_idAndEndLessThanOrderByStartDesc(2L, start, PageRequest.of(0, 10));
     }
 
     @Test
@@ -231,14 +233,14 @@ public class BookingServiceImplTest {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(userNotOwner));
         final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
-        when(bookingRepository.findAllBookingsOfUserFuture(anyLong(), any(), PageRequest.of(anyInt(), 10)))
+        when(bookingRepository.findByBooker_idAndStartGreaterThanOrderByStartDesc(anyLong(), any(), PageRequest.of(anyInt(), 10)))
                 .thenReturn(bookings);
 
         final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfUser(userNotOwner.getId(), BookingState.FUTURE, 0, 10);
 
         assertNotNull(bookingsDto);
 
-        verify(bookingRepository, times(0)).findAllBookingsOfUserFuture(2L, start, PageRequest.of(0, 10));
+        verify(bookingRepository, times(0)).findByBooker_idAndStartGreaterThanOrderByStartDesc(2L, start, PageRequest.of(0, 10));
     }
 
     @Test
@@ -280,14 +282,14 @@ public class BookingServiceImplTest {
         when(itemRepository.findAll())
                 .thenReturn(items);
         final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
-        when(bookingRepository.findAllBookingsOfItemOwner(any(), PageRequest.of(anyInt(), 10)))
+        when(bookingRepository.findByItem_idInOrderByStartDesc(any(), PageRequest.of(anyInt(), 10)))
                 .thenReturn(bookings);
 
         final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfOwner(user.getId(), BookingState.ALL, 0, 10);
 
         assertNotNull(bookingsDto);
 
-        verify(bookingRepository, times(1)).findAllBookingsOfItemOwner(List.of(1L), PageRequest.of(0, 10));
+        verify(bookingRepository, times(1)).findByItem_idInOrderByStartDesc(List.of(1L), PageRequest.of(0, 10));
     }
 
     @Test
@@ -300,14 +302,14 @@ public class BookingServiceImplTest {
         when(itemRepository.findAll())
                 .thenReturn(items);
         final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
-        when(bookingRepository.findBookingsOfItemOwnerBetween(any(), any(), any(), PageRequest.of(anyInt(), 10)))
+        when(bookingRepository.findByItem_idInAndStartLessThanAndEndGreaterThanOrderByStartDesc(any(), any(), any(), PageRequest.of(anyInt(), 10)))
                 .thenReturn(bookings);
 
         final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfOwner(user.getId(), BookingState.CURRENT, 0, 10);
 
         assertNotNull(bookingsDto);
 
-        verify(bookingRepository, times(0)).findBookingsOfItemOwnerBetween(List.of(1L), start, end, PageRequest.of(0, 10));
+        verify(bookingRepository, times(0)).findByItem_idInAndStartLessThanAndEndGreaterThanOrderByStartDesc(List.of(1L), start, end, PageRequest.of(0, 10));
     }
 
     @Test
@@ -319,14 +321,14 @@ public class BookingServiceImplTest {
         when(itemRepository.findAll())
                 .thenReturn(items);
         final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
-        when(bookingRepository.findBookingsOfItemOwnerInPast(any(), any(), PageRequest.of(anyInt(), 10)))
+        when(bookingRepository.findByItem_idInAndEndLessThanOrderByStartDesc(any(), any(), PageRequest.of(anyInt(), 10)))
                 .thenReturn(bookings);
 
         final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfOwner(user.getId(), BookingState.PAST, 0, 10);
 
         assertNotNull(bookingsDto);
 
-        verify(bookingRepository, times(0)).findBookingsOfItemOwnerInPast(List.of(1L), start, PageRequest.of(0, 10));
+        verify(bookingRepository, times(0)).findByItem_idInAndEndLessThanOrderByStartDesc(List.of(1L), start, PageRequest.of(0, 10));
     }
 
     @Test
@@ -338,14 +340,14 @@ public class BookingServiceImplTest {
         when(itemRepository.findAll())
                 .thenReturn(items);
         final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
-        when(bookingRepository.findBookingsOfItemOwnerInFuture(any(), any(), PageRequest.of(anyInt(), 10)))
+        when(bookingRepository.findByItem_idInAndStartGreaterThanOrderByStartDesc(any(), any(), PageRequest.of(anyInt(), 10)))
                 .thenReturn(bookings);
 
         final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfOwner(user.getId(), BookingState.FUTURE, 0, 10);
 
         assertNotNull(bookingsDto);
 
-        verify(bookingRepository, times(0)).findBookingsOfItemOwnerInFuture(List.of(1L), start, PageRequest.of(0, 10));
+        verify(bookingRepository, times(0)).findByItem_idInAndStartGreaterThanOrderByStartDesc(List.of(1L), start, PageRequest.of(0, 10));
     }
 
     @Test
@@ -356,14 +358,14 @@ public class BookingServiceImplTest {
         when(itemRepository.findAll())
                 .thenReturn(items);
         final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser));
-        when(bookingRepository.findAllBookingsOfItemOwnerWithStatus(any(), any(), PageRequest.of(anyInt(), 10)))
+        when(bookingRepository.findByItem_idInAndStatusOrderByStartDesc(any(), any(), PageRequest.of(anyInt(), 10)))
                 .thenReturn(bookings);
 
         final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfOwner(user.getId(), BookingState.WAITING, 0, 10);
 
         assertNotNull(bookingsDto);
 
-        verify(bookingRepository, times(1)).findAllBookingsOfItemOwnerWithStatus(List.of(1L), BookingStatus.WAITING, PageRequest.of(0, 10));
+        verify(bookingRepository, times(1)).findByItem_idInAndStatusOrderByStartDesc(List.of(1L), BookingStatus.WAITING, PageRequest.of(0, 10));
     }
 
     @Test
@@ -375,24 +377,26 @@ public class BookingServiceImplTest {
         when(itemRepository.findAll())
                 .thenReturn(items);
         final List<Booking> bookings = new ArrayList<>(Collections.singletonList(bookingByNewUser1));
-        when(bookingRepository.findAllBookingsOfItemOwnerWithStatus(any(), any(), PageRequest.of(anyInt(), 10)))
+        when(bookingRepository.findByItem_idInAndStatusOrderByStartDesc(any(), any(), PageRequest.of(anyInt(), 10)))
                 .thenReturn(bookings);
 
         final List<BookingDto> bookingsDto = bookingServiceImpl.getAllBookingsOfOwner(user.getId(), BookingState.REJECTED, 0, 10);
 
         assertNotNull(bookingsDto);
 
-        verify(bookingRepository, times(1)).findAllBookingsOfItemOwnerWithStatus(List.of(1L), BookingStatus.REJECTED, PageRequest.of(0, 10));
+        verify(bookingRepository, times(1)).findByItem_idInAndStatusOrderByStartDesc(List.of(1L), BookingStatus.REJECTED, PageRequest.of(0, 10));
     }
 
     @Test
     void testGetBookingByIdNotUser() {
-        assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBooking(3L, 1L));
+       final NotFoundException exception = assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBooking(3L, 1L));
+        assertEquals("Бронирование c id=" + 1L + " не существует!", exception.getMessage());
     }
 
     @Test
     void testGetBookingByIdNotFound() {
-        assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBooking(3L, 10L));
+        final NotFoundException exception = assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBooking(3L, 10L));
+        assertEquals("Бронирование c id=" + 10L + " не существует!", exception.getMessage());
     }
 
 }

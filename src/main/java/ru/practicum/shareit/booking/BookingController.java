@@ -18,10 +18,12 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class BookingController {
+
+    private final String httpHeaderUserId = "X-Sharer-User-Id";
     private final BookingService bookingService;
 
     @GetMapping("/{bookingId}")
-    public BookingDto getBooking(@RequestHeader("X-Sharer-User-Id") long userId,
+    public BookingDto getBooking(@RequestHeader(httpHeaderUserId) long userId,
                                  @PathVariable("bookingId") long bookingId) {
         BookingDto bookingDto = bookingService.getBooking(userId, bookingId);
         log.debug("Бронирование с id :" + bookingId);
@@ -29,7 +31,7 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingDto> getBookingOfUser(@RequestHeader("X-Sharer-User-Id") long userId,
+    public List<BookingDto> getBookingOfUser(@RequestHeader(httpHeaderUserId) long userId,
                                              @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
                                              @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
@@ -43,7 +45,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public List<BookingDto> getBookingOfOwner(@RequestHeader("X-Sharer-User-Id") long userId,
+    public List<BookingDto> getBookingOfOwner(@RequestHeader(httpHeaderUserId) long userId,
                                               @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
                                               @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
                                               @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
@@ -57,7 +59,7 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingDto bookingItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public BookingDto bookingItem(@RequestHeader(httpHeaderUserId) long userId,
                                   @Valid @RequestBody StartAndEndBookingDto startAndEndBookingDto) {
         BookingDto bookingDtoCreated = bookingService.createBooking(userId, startAndEndBookingDto);
         log.debug("Создано бронирование у пользователя с id :" + userId);
@@ -65,7 +67,7 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDto changeOfBooking(@RequestHeader("X-Sharer-User-Id") long userId,
+    public BookingDto changeOfBooking(@RequestHeader(httpHeaderUserId) long userId,
                                       @PathVariable("bookingId") long bookingId,
                                       @RequestParam("approved") Boolean approved) {
         BookingDto bookingDto = bookingService.updateBooking(userId, bookingId, approved);

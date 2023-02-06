@@ -22,14 +22,6 @@ class ItemJsonTest {
     private JacksonTester<ItemWithBookingDto> jacksonTester;
 
     @Test
-    void createDtoItemTest() {
-    }
-
-    @Test
-    void createDtoListItemTest() {
-    }
-
-    @Test
     void createItemTest() {
         User user = new User(1L, "Sergey1", "sergey1@gmail.com");
         ItemDto itemDto = new ItemDto();

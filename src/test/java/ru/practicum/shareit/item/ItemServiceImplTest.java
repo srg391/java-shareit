@@ -31,16 +31,16 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ItemServiceImplTest {
 
-    ItemService itemServiceImpl;
+    private ItemService itemServiceImpl;
 
     @Mock
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Mock
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
     @Mock
-    ItemMapper itemMapper;
+    private ItemMapper itemMapper;
 
     private Item item;
     private User user;
@@ -87,9 +87,11 @@ public class ItemServiceImplTest {
 
     @Test
     void itemWithNotFoundTest() {
-        when(itemRepository.findById(1L));
+        when(itemRepository.findById(1L))
+                .thenReturn(Optional.empty());
         final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> itemServiceImpl.getItem(item.getId(), user.getId()));
         verify(itemRepository, times(1)).findById(1L);
+        assertEquals("Вещь c id=" + 1L + " не существует!", runtimeException.getMessage());
     }
 
     @Test

@@ -26,13 +26,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class BookingControllerTest {
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @MockBean
-    BookingService bookingServiceImpl;
+    private BookingService bookingServiceImpl;
     private BookingDto bookingDto;
     private StartAndEndBookingDto startAndEndBookingDto;
-    String jsonContent;
+    private String jsonContent;
 
     private User user;
 

@@ -19,10 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemRequestController {
 
+    private final String httpHeaderUserId = "X-Sharer-User-Id";
+
     private final ItemRequestService itemRequestService;
 
     @GetMapping("/{requestId}")
-    public ItemRequestDto getRequest(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemRequestDto getRequest(@RequestHeader(httpHeaderUserId) long userId,
                                      @PathVariable("requestId") long requestId) {
         ItemRequestDto itemRequestDto = itemRequestService.getRequest(requestId, userId);
         log.debug("Запрос с id :" + requestId);
@@ -30,7 +32,7 @@ public class ItemRequestController {
     }
 
     @GetMapping
-    public List<ItemRequestDto> getRequestOfUser(@RequestHeader ("X-Sharer-User-Id") long userId,
+    public List<ItemRequestDto> getRequestOfUser(@RequestHeader (httpHeaderUserId) long userId,
                                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
                                                  @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         List<ItemRequestDto> requests = itemRequestService.getRequestOfUser(userId, from, size);
@@ -39,7 +41,7 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> getAllRequestsOfUser(@RequestHeader ("X-Sharer-User-Id") long userId,
+    public List<ItemRequestDto> getAllRequestsOfUser(@RequestHeader (httpHeaderUserId) long userId,
                                                      @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
                                                      @Positive  @RequestParam(name = "size", defaultValue = "10") int size) {
         List<ItemRequestDto> requests = itemRequestService.getAllRequestsOfUsers(userId, from, size);
@@ -48,7 +50,7 @@ public class ItemRequestController {
     }
 
     @PostMapping
-    public ItemRequestDto createRequest(@RequestHeader ("X-Sharer-User-Id") long userId,
+    public ItemRequestDto createRequest(@RequestHeader (httpHeaderUserId) long userId,
                                        @Validated({Create.class}) @RequestBody NewestItemRequestDto newestItemRequestDto) {
         ItemRequestDto itemRequestDto = itemRequestService.createRequest(userId, newestItemRequestDto);
         log.debug("Создан запрос у пользователя с id :" + userId);

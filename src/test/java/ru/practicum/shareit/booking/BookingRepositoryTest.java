@@ -63,7 +63,7 @@ public class BookingRepositoryTest {
         testEntityManager.persist(item);
         testEntityManager.persist(bookingByNewUser);
 
-        List<Booking> bookingsList = bookingRepository.findAllBookingsOfUserBetween(userNotOwner.getId(), LocalDateTime.of(2022, 12, 1, 1, 1), LocalDateTime.now(), PageRequest.of(0, 10));
+        List<Booking> bookingsList = bookingRepository.findByBooker_idAndStartLessThanAndEndGreaterThanOrderByStartDesc(userNotOwner.getId(), LocalDateTime.of(2022, 12, 1, 1, 1), LocalDateTime.now(), PageRequest.of(0, 10));
 
         then(bookingsList).size().isEqualTo(0);
     }
@@ -75,7 +75,7 @@ public class BookingRepositoryTest {
         testEntityManager.persist(item);
         testEntityManager.persist(bookingByNewUser);
 
-        List<Booking> bookingsList = bookingRepository.findAllBookingsOfUserPast(userNotOwner.getId(), LocalDateTime.of(2023, 12, 6, 1, 1), PageRequest.of(0, 10));
+        List<Booking> bookingsList = bookingRepository.findByBooker_idAndEndLessThanOrderByStartDesc(userNotOwner.getId(), LocalDateTime.of(2023, 12, 6, 1, 1), PageRequest.of(0, 10));
 
         then(bookingsList).size().isEqualTo(1);
     }
@@ -87,7 +87,7 @@ public class BookingRepositoryTest {
         testEntityManager.persist(item);
         testEntityManager.persist(bookingByNewUser);
 
-        List<Booking> bookingsList = bookingRepository.findAllBookingsOfUserFuture(userNotOwner.getId(), LocalDateTime.of(2022, 11, 1, 1, 1), PageRequest.of(0, 10));
+        List<Booking> bookingsList = bookingRepository.findByBooker_idAndStartGreaterThanOrderByStartDesc(userNotOwner.getId(), LocalDateTime.of(2022, 11, 1, 1, 1), PageRequest.of(0, 10));
 
         then(bookingsList).size().isEqualTo(1);
     }
@@ -112,7 +112,7 @@ public class BookingRepositoryTest {
         testEntityManager.persist(item);
         testEntityManager.persist(bookingByNewUser);
 
-        List<Booking> bookingsList = bookingRepository.findAllBookingsOfItemOwner(List.of(item.getId()), PageRequest.of(0, 10));
+        List<Booking> bookingsList = bookingRepository.findByItem_idInOrderByStartDesc(List.of(item.getId()), PageRequest.of(0, 10));
         then(bookingsList).size().isEqualTo(1);
     }
 
@@ -123,7 +123,7 @@ public class BookingRepositoryTest {
         testEntityManager.persist(item);
         testEntityManager.persist(bookingByNewUser);
 
-        List<Booking> bookingsList = bookingRepository.findBookingsOfItemOwnerBetween(List.of(item.getId()), LocalDateTime.of(2023, 12, 2, 1, 1), LocalDateTime.of(2023, 12, 3, 1, 1), PageRequest.of(0, 10));
+        List<Booking> bookingsList = bookingRepository.findByItem_idInAndStartLessThanAndEndGreaterThanOrderByStartDesc(List.of(item.getId()), LocalDateTime.of(2023, 12, 2, 1, 1), LocalDateTime.of(2023, 12, 3, 1, 1), PageRequest.of(0, 10));
         then(bookingsList).size().isEqualTo(1);
     }
 
@@ -134,7 +134,7 @@ public class BookingRepositoryTest {
         testEntityManager.persist(item);
         testEntityManager.persist(bookingByNewUser);
 
-        List<Booking> bookingsList = bookingRepository.findBookingsOfItemOwnerInPast(List.of(item.getId()), LocalDateTime.of(2023, 12, 8, 19, 55), PageRequest.of(0, 10));
+        List<Booking> bookingsList = bookingRepository.findByItem_idInAndEndLessThanOrderByStartDesc(List.of(item.getId()), LocalDateTime.of(2023, 12, 8, 19, 55), PageRequest.of(0, 10));
         then(bookingsList).size().isEqualTo(1);
     }
 
@@ -145,7 +145,7 @@ public class BookingRepositoryTest {
         testEntityManager.persist(item);
         testEntityManager.persist(bookingByNewUser);
 
-        List<Booking> bookingsList = bookingRepository.findBookingsOfItemOwnerInFuture(List.of(item.getId()), LocalDateTime.now(), PageRequest.of(0, 10));
+        List<Booking> bookingsList = bookingRepository.findByItem_idInAndStartGreaterThanOrderByStartDesc(List.of(item.getId()), LocalDateTime.now(), PageRequest.of(0, 10));
         then(bookingsList).size().isEqualTo(1);
     }
 
@@ -156,7 +156,7 @@ public class BookingRepositoryTest {
         testEntityManager.persist(item);
         testEntityManager.persist(bookingByNewUser);
 
-        List<Booking> bookingsList = bookingRepository.findAllBookingsOfItemOwnerWithStatus(List.of(item.getId()), WAITING, PageRequest.of(0, 10));
+        List<Booking> bookingsList = bookingRepository.findByItem_idInAndStatusOrderByStartDesc(List.of(item.getId()), WAITING, PageRequest.of(0, 10));
         then(bookingsList).size().isEqualTo(1);
     }
 
@@ -168,7 +168,7 @@ public class BookingRepositoryTest {
         booking = new Booking(null, LocalDateTime.of(2021, 12, 1, 1, 1), LocalDateTime.of(2021, 12, 2, 1, 1), item, userNotOwner, WAITING);
         testEntityManager.persist(booking);
 
-        List<Booking> bookingsList = bookingRepository.findLastBookings(userOwner.getId(), item.getId(), LocalDateTime.now(), WAITING);
+        List<Booking> bookingsList = bookingRepository.findByItem_owner_idAndItem_idAndEndLessThanAndStatusOrderByStartDesc(userOwner.getId(), item.getId(), LocalDateTime.now(), WAITING);
         then(bookingsList).size().isEqualTo(1);
     }
 
@@ -180,7 +180,7 @@ public class BookingRepositoryTest {
         booking = new Booking(null, LocalDateTime.of(2023, 12, 1, 1, 1), LocalDateTime.of(2023, 12, 2, 1, 1), item, userNotOwner, WAITING);
         testEntityManager.persist(booking);
 
-        List<Booking> bookingsList = bookingRepository.findFutureBookings(userOwner.getId(), item.getId(), LocalDateTime.now(), WAITING);
+        List<Booking> bookingsList = bookingRepository.findByItem_owner_idAndItem_idAndStartGreaterThanAndStatusOrderByStartDesc(userOwner.getId(), item.getId(), LocalDateTime.now(), WAITING);
         then(bookingsList).size().isEqualTo(1);
     }
 }

@@ -10,9 +10,9 @@ public interface ItemService {
 
     public ItemWithBookingDto getItem(long userId, long itemId);
 
-    public List<ItemWithBookingDto> getAllItemsOfUser(long userId);
+    public List<ItemWithBookingDto> getAllItemsOfUser(long userId, int from, int size);
 
-    public List<ItemDto> getItemsBySearch(String text);
+    public List<ItemDto> getItemsBySearch(String text, int from, int size);
 
     public ItemDto createItem(long userId, ItemDto itemDto);
 

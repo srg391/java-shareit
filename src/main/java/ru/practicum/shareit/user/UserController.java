@@ -11,9 +11,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Validated
 @RestController
 @RequestMapping(path = "/users")
@@ -38,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto createUser(@Validated(Create.class) @RequestBody UserDto userDto) {
+    public UserDto createUser(@Validated({Create.class}) @RequestBody UserDto userDto) {
         UserDto userDtoCreated = userService.createUser(userDto);
         log.debug("Создан новый пользователь");
         return userDtoCreated;

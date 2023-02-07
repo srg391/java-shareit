@@ -1,7 +1,7 @@
 package ru.practicum.shareit.booking.model;
 
 import lombok.NonNull;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.StartAndEndBookingDto;
@@ -11,7 +11,7 @@ import ru.practicum.shareit.user.model.User;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 public class BookingMapper {
 
     public BookingDto createDtoBooking(@NonNull Booking booking) {

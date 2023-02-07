@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +44,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private ItemWithBookingDto getItemWithBooking(Item item, long ownerId, long itemId) {
-        List<Booking> lastBookings = bookingRepository.findLastBookings(ownerId, itemId, LocalDateTime.now(), BookingStatus.APPROVED);
-        List<Booking> futureBookings = bookingRepository.findFutureBookings(ownerId, itemId, LocalDateTime.now(), BookingStatus.APPROVED);
+        List<Booking> lastBookings = bookingRepository.findByItem_owner_idAndItem_idAndEndLessThanAndStatusOrderByStartDesc(ownerId, itemId, LocalDateTime.now(), BookingStatus.APPROVED);
+        List<Booking> futureBookings = bookingRepository.findByItem_owner_idAndItem_idAndStartGreaterThanAndStatusOrderByStartDesc(ownerId, itemId, LocalDateTime.now(), BookingStatus.APPROVED);
 
         Booking last = lastBookings.stream()
                 .max(Comparator.comparing(Booking::getEnd))
@@ -58,10 +59,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public List<ItemWithBookingDto> getAllItemsOfUser(long userId) {
+    public List<ItemWithBookingDto> getAllItemsOfUser(long userId, int from, int size) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Хозяин c id=" + userId + " не существует!"));
-        List<Item> items = itemRepository.findAll().stream()
+        int page = from / size;
+        List<Item> items = itemRepository.findAll(PageRequest.of(page, size)).stream()
                 .filter(i -> i.getOwner() == owner)
                 .collect(Collectors.toList());
         List<ItemWithBookingDto> itemsFinal = new ArrayList<>();
@@ -74,11 +76,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> getItemsBySearch(String text) {
+    public List<ItemDto> getItemsBySearch(String text, int from, int size) {
+        int page = from / size;
         if (text.isBlank()) {
             return Collections.emptyList();
         }
-        List<Item> items = itemRepository.findAll().stream()
+        List<Item> items = itemRepository.findAll(PageRequest.of(page, size)).stream()
                 .filter(i -> i.getName().toLowerCase().contains(text.toLowerCase())
                         || i.getDescription().toLowerCase().contains(text.toLowerCase()))
                 .filter(Item::getAvailable)

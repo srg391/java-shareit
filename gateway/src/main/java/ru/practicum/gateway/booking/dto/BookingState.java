@@ -14,9 +14,8 @@ public enum BookingState {
 
     WAITING,
 
-    REJECTED,
+    REJECTED;
 
-    UNSUPPORTED_STATUS;
 
     public static Optional<BookingState> from(String stringState) {
         for (BookingState state: values()) {

@@ -65,6 +65,7 @@ public class ItemServiceImpl implements ItemService {
         int page = from / size;
         List<Item> items = itemRepository.findAll(PageRequest.of(page, size)).stream()
                 .filter(i -> i.getOwner() == owner)
+                .sorted(new IdComparator())
                 .collect(Collectors.toList());
         List<ItemWithBookingDto> itemsFinal = new ArrayList<>();
         for (Item item : items) {
@@ -72,6 +73,13 @@ public class ItemServiceImpl implements ItemService {
             itemsFinal.add(itemWithBookingDto);
         }
         return itemsFinal;
+    }
+
+    class IdComparator implements Comparator<Item> {
+        public int compare(Item a, Item b) {
+
+            return a.getId().compareTo(b.getId());
+        }
     }
 
     @Transactional(readOnly = true)

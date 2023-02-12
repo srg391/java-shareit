@@ -34,8 +34,8 @@ public class BookingController {
     @GetMapping
     public ResponseEntity<Object> getBookings(@RequestHeader(httpHeaderUserId) long userId,
                                      @RequestParam(name = "state", defaultValue = "all") String stateParam,
-                                     @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
-                                     @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
+                                     @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                     @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Неизвестное состояние бронирования: " + stateParam));
         ResponseEntity<Object> bookings = bookingClient.getBookings(userId, state, from, size);

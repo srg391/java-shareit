@@ -22,9 +22,6 @@ public class ItemWithBookingDto {
     private Booking nextBooking;
 
     @Getter
-    @Setter
-    @EqualsAndHashCode(of = "id")
-    @NoArgsConstructor
     @AllArgsConstructor
     public static class Booking {
         private Long id;

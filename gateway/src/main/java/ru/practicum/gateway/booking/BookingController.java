@@ -37,7 +37,7 @@ public class BookingController {
                                      @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                      @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Неизвестное состояние бронирования: " + stateParam));
+                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
         ResponseEntity<Object> bookings = bookingClient.getBookings(userId, state, from, size);
         log.debug("Бронирования с состоянием : " + stateParam + ", Пользователя с id : " + userId);
         return bookings;
@@ -46,10 +46,10 @@ public class BookingController {
     @GetMapping("/owner")
     public ResponseEntity<Object> getBookingOfOwner(@RequestHeader(httpHeaderUserId) long userId,
                                               @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
-                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
-                                              @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
+                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                              @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Неизвестное состояние бронирования: " + stateParam));
+                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
         ResponseEntity<Object> bookings = bookingClient.getBookingOfOwner(userId, state, from, size);
         log.info("Бронирований пользователя с id = " + userId);
         return bookings;
